@@ -1,0 +1,6 @@
+# IntelliJ
+.idea
+
+# Dart
+.packages
+.dart_tool
