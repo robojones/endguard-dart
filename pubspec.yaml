@@ -1,0 +1,13 @@
+name: endguard
+version: 0.0.1
+description: >-
+  Dart implementation of the endguard encryption
+homepage: https://github.com/robojones/endguard
+environment:
+  sdk: '>=2.10.0 <3.0.0'
+dev_dependencies:
+  test: ^1.16.7
+  pedantic: ^1.0.0
+dependencies:
+  cryptography: ^2.0.1
+  protobuf: ^2.0.0
