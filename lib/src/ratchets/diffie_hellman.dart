@@ -8,12 +8,12 @@ class DiffieHellmanRatchet {
 
   DiffieHellmanRatchet(this._stateAccessor);
 
-  void setRemoteDiffieHellmanKey(SimplePublicKey key) {
-    _stateAccessor.setRemoteDiffieHellmanKey(key);
+  set remoteDiffieHellmanKey(SimplePublicKey key) {
+    _stateAccessor.remoteDiffieHellmanKey = key;
   }
 
-  SimplePublicKey getRemoteDiffieHellmanKey() {
-    return _stateAccessor.getRemoteDiffieHellmanKey();
+  SimplePublicKey get remoteDiffieHellmanKey {
+    return _stateAccessor.remoteDiffieHellmanKey;
   }
 
   Future<void> addLocalDiffieHellmanKeyPair(SimpleKeyPair pair) async {
@@ -44,12 +44,12 @@ class DiffieHellmanRatchet {
     await _stateAccessor.removePreviousLocalDiffieHellmanKeyPairs(localPair);
 
     // compute shared secret
-    final remotePk = _stateAccessor.getRemoteDiffieHellmanKey();
+    final remotePk = _stateAccessor.remoteDiffieHellmanKey;
     final secret =
         await dh.sharedSecretKey(keyPair: localPair, remotePublicKey: remotePk);
 
     // update ratchet value
-    _stateAccessor.setIncomingDiffieHellmanRatchet(secret);
+    _stateAccessor.incomingDiffieHellmanRatchet = secret;
   }
 
   /// Advance the outgoing ratchet with the newly generated newKeyPair.
@@ -57,20 +57,20 @@ class DiffieHellmanRatchet {
   /// Expects localDiffieHellmanKeyPairs to contain a newly generated public key.
   Future<void> advanceOutgoingDiffieHellmanRatchet() async {
     // compute shared secret
-    final localPair = _stateAccessor.getLatestLocalDiffieHellmanKeyPair();
-    final remotePk = _stateAccessor.getRemoteDiffieHellmanKey();
+    final localPair = _stateAccessor.latestLocalDiffieHellmanKeyPair;
+    final remotePk = _stateAccessor.remoteDiffieHellmanKey;
     final secret =
         await dh.sharedSecretKey(keyPair: localPair, remotePublicKey: remotePk);
 
     // update ratchet value
-    _stateAccessor.setOutgoingDiffieHellmanRatchet(secret);
+    _stateAccessor.outgoingDiffieHellmanRatchet = secret;
   }
 
-  SecretKeyData getIncomingRatchetValue() {
-    return _stateAccessor.getIncomingDiffieHellmanRatchet();
+  SecretKeyData get incomingRatchetValue {
+    return _stateAccessor.incomingDiffieHellmanRatchet;
   }
 
-  SecretKeyData getOutgoingRatchetValue() {
-    return _stateAccessor.getOutgoingDiffieHellmanRatchet();
+  SecretKeyData get outgoingRatchetValue {
+    return _stateAccessor.outgoingDiffieHellmanRatchet;
   }
 }

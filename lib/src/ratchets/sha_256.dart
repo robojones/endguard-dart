@@ -16,47 +16,43 @@ class SHA256Ratchet {
 
   SecretKeyData initializeIncomingSHA256Ratchet() {
     final v = SecretKeyData.random(length: hashRatchetSize);
-    _stateAccessor.setIncomingSHA256Ratchet(v);
+    incomingRatchetValue = v;
     return v;
   }
 
   SecretKeyData initializeOutgoingSHA256Ratchet() {
     final v = SecretKeyData.random(length: hashRatchetSize);
-    _stateAccessor.setOutgoingSHA256Ratchet(v);
+    outgoingRatchetValue = v;
     return v;
   }
 
   Future<void> advanceIncomingRatchet(Uint8List plaintext) async {
-    final previousValue = getIncomingRatchetValue();
-    final data = plaintext + previousValue.bytes;
+    final data = plaintext + incomingRatchetValue.bytes;
     final hash = await sha.hash(data);
 
-    final newValue = SecretKeyData(hash.bytes);
-    setIncomingRatchetValue(newValue);
+    incomingRatchetValue = SecretKeyData(hash.bytes);
   }
 
   Future<void> advanceOutgoingRatchet(Uint8List plaintext) async {
-    final previousValue = getOutgoingRatchetValue();
-    final data = plaintext + previousValue.bytes;
+    final data = plaintext + outgoingRatchetValue.bytes;
     final hash = await sha.hash(data);
 
-    final newValue = SecretKeyData(hash.bytes);
-    setOutgoingRatchetValue(newValue);
+    outgoingRatchetValue = SecretKeyData(hash.bytes);
   }
 
-  void setIncomingRatchetValue(SecretKeyData s) {
-    _stateAccessor.setIncomingSHA256Ratchet(s);
+  set incomingRatchetValue(SecretKeyData s) {
+    _stateAccessor.incomingSHA256Ratchet = s;
   }
 
-  void setOutgoingRatchetValue(SecretKeyData s) {
-    _stateAccessor.setOutgoingSHA256Ratchet(s);
+  set outgoingRatchetValue(SecretKeyData s) {
+    _stateAccessor.outgoingSHA256Ratchet = s;
   }
 
-  SecretKeyData getIncomingRatchetValue() {
-    return _stateAccessor.getIncomingSHA256Ratchet();
+  SecretKeyData get incomingRatchetValue {
+    return _stateAccessor.incomingSHA256Ratchet;
   }
 
-  SecretKeyData getOutgoingRatchetValue() {
-    return _stateAccessor.getOutgoingSHA256Ratchet();
+  SecretKeyData get outgoingRatchetValue {
+    return _stateAccessor.outgoingSHA256Ratchet;
   }
 }
