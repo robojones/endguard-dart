@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:endguard/src/connection/encryption.dart';
 import 'package:endguard/src/connection/handshake.dart';
-import 'package:endguard/src/encryption/handshake.dart';
+import 'package:endguard/src/crypto/handshake.dart';
 import 'package:endguard/src/state/initialization_state.dart';
 import 'package:endguard/src/exception/operation_exception.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';

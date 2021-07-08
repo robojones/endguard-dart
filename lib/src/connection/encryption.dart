@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:endguard/src/encryption/aes.dart';
+import 'package:endguard/src/crypto/aes.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/ratchets/diffie_hellman.dart';
 import 'package:endguard/src/ratchets/sha_256.dart';
