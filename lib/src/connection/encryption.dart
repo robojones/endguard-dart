@@ -44,7 +44,7 @@ class Encryption {
     // derive incoming key
     final key = await _deriveDecryptionKey();
 
-    final envelopeBytes = await AES.aesCbcDecrypt(e, key);
+    final envelopeBytes = await AES.decryptAES256_GCM(e, key);
     final envelope = Envelope.fromBuffer(envelopeBytes);
 
     // advance Diffie-Hellman ratchet
@@ -79,7 +79,7 @@ class Encryption {
     final envelopeBytes = envelope.writeToBuffer();
 
     // encrypt
-    final e = await AES.aesCbcEncrypt(envelopeBytes, key);
+    final e = await AES.encryptAES256_GCM(envelopeBytes, key);
 
     // advance Diffie-Hellman ratchet
     await _diffieHellmanRatchet.advanceOutgoingDiffieHellmanRatchet();

@@ -6,25 +6,35 @@ import 'package:endguard/src/protos/protocol.pb.dart';
 final aes = AesGcm.with256bits();
 
 class AES {
-  static Future<Uint8List> aesCbcDecrypt(
-      EncryptedMessage e, SecretKeyData k) async {
-    final mac = Mac(e.mac);
-    final secretBox = SecretBox(e.ciphertext, nonce: e.nonce, mac: mac);
+  /// Decrypts an AES256-GCM [encryptedMessage] using the [key]
+  /// and authenticates the additional authenticated data [aad]
+  static Future<Uint8List> decryptAES256_GCM(
+      EncryptedMessage encryptedMessage, SecretKeyData key, { Uint8List aad }) async {
+    aad ??= Uint8List(0);
+
+    final mac = Mac(encryptedMessage.mac);
+    final secretBox = SecretBox(encryptedMessage.ciphertext, nonce: encryptedMessage.nonce, mac: mac);
 
     final plaintext = await aes.decrypt(
       secretBox,
-      secretKey: k,
+      secretKey: key,
+      aad: aad,
     );
 
     return Uint8List.fromList(plaintext);
   }
 
-  static Future<EncryptedMessage> aesCbcEncrypt(
-      Uint8List plaintext, SecretKeyData k) async {
+  /// Encrypts a [plaintext] message using the [key]
+  /// and includes the additional authenticated data [aad] in the mac.
+  static Future<EncryptedMessage> encryptAES256_GCM(
+      Uint8List plaintext, SecretKeyData k, { Uint8List aad }) async {
+    aad ??= Uint8List(0);
+
     final secretBox = await aes.encrypt(
       plaintext,
       secretKey: k,
       nonce: aes.newNonce(),
+      aad: aad,
     );
 
     final e = EncryptedMessage();
