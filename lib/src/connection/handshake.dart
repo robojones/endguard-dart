@@ -9,12 +9,11 @@ import 'package:endguard/src/ratchets/sha_256.dart';
 class Handshake {
   final DiffieHellmanRatchet _diffieHellmanRatchet;
   final SHA256Ratchet _sha256Ratchet;
-  final InitialPackageEncryption _encryption;
 
   Handshake(
-      this._diffieHellmanRatchet, this._sha256Ratchet, this._encryption);
+      this._diffieHellmanRatchet, this._sha256Ratchet);
 
-  Future<EncryptedPackage> createConnectionOffer() async {
+  Future<HandshakePackage> createConnectionOffer() async {
     final k =
         await _diffieHellmanRatchet.generateAndAddLocalDiffieHellmanKeyPair();
 
@@ -23,13 +22,13 @@ class Handshake {
     w.newDiffieHellmanPublicKey = pk.bytes;
     final plaintext = w.writeToBuffer();
 
-    return await _encryption.encryptPackage(plaintext);
+    return await HandshakeEncryption.encryptPackage(plaintext);
   }
 
-  Future<EncryptedPackage> applyConnectionOffer(Uint8List welcomePackage,
+  Future<HandshakePackage> applyConnectionOffer(Uint8List welcomePackage,
       {SecretKey remoteKey}) async {
     final bytes =
-        await _encryption.decryptPackage(welcomePackage, key: remoteKey);
+        await HandshakeEncryption.decryptPackage(welcomePackage, key: remoteKey);
     final p = ConnectionOffer.fromBuffer(bytes);
 
     // set remote public key in Diffie-Hellman ratchet
@@ -63,13 +62,13 @@ class Handshake {
     oc.incomingSHA256RatchetInitValue = incomingSHA256RatchetInitValue.bytes;
     oc.outgoingSHA256RatchetInitValue = outgoingSHA256RatchetInitValue.bytes;
 
-    return await _encryption.encryptPackage(oc.writeToBuffer());
+    return await HandshakeEncryption.encryptPackage(oc.writeToBuffer());
   }
 
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
       {SecretKey remoteKey}) async {
     final bytes =
-        await _encryption.decryptPackage(connectionConfirmation, key: remoteKey);
+        await HandshakeEncryption.decryptPackage(connectionConfirmation, key: remoteKey);
     final oc = ConnectionConfirmation.fromBuffer(bytes);
 
     final localPk = SimplePublicKey(oc.connectionOfferDiffieHellmanPublicKey,

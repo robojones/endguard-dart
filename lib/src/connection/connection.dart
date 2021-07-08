@@ -31,11 +31,10 @@ class Connection {
     _stateAccessor = s;
     final diffieHellmanRatchet = DiffieHellmanRatchet(s);
     final sha256Ratchet = SHA256Ratchet(s);
-    final initialPackageEncryption = InitialPackageEncryption();
 
     _connectionState = InitialisationStateManager(s);
     _initialization = Handshake(
-        diffieHellmanRatchet, sha256Ratchet, initialPackageEncryption);
+        diffieHellmanRatchet, sha256Ratchet);
     _encryption = Encryption(diffieHellmanRatchet, sha256Ratchet);
   }
 
@@ -43,7 +42,7 @@ class Connection {
     return _stateAccessor.exportState();
   }
 
-  Future<EncryptedPackage> createConnectionOffer() async {
+  Future<HandshakePackage> createConnectionOffer() async {
     _connectionState.beginOperation(Operation.CreateConnectionOffer);
     try {
       final p = await _initialization.createConnectionOffer();
@@ -55,7 +54,7 @@ class Connection {
     }
   }
 
-  Future<EncryptedPackage> applyConnectionOffer(Uint8List welcomePackage,
+  Future<HandshakePackage> applyConnectionOffer(Uint8List welcomePackage,
       {SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionOffer);
     try {
