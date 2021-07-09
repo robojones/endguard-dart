@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:endguard/src/crypto/encryption.dart';
 import 'package:endguard/src/exception/handshake_exception.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
-
-import 'aes.dart';
 
 /// The hash algorithm that is used by the InitialPackageEncryption.
 final sha = Sha256();
@@ -50,19 +49,19 @@ class HandshakeEncryption {
   }
 
   /// Encrypts a [package] using its SHA256 hash as key.
-  static Future<HandshakeMessage> encryptMessage(Uint8List package) async {
+  static Future<HandshakeMessage> encryptMessage(Uint8List package, { Algorithm algorithm }) async {
     final key = await _hashSHA256(package);
-    final e = await AES.encryptAES256_GCM(package, key);
+    final e = await MessageEncryption.encrypt(package, key, algorithm: algorithm);
     final bytes = e.writeToBuffer();
 
     return HandshakeMessage(bytes, key: key);
   }
 
   /// Decrypts an encrypted [package] using the [key].
-  static Future<Uint8List> decryptMessage(Uint8List package, {SecretKey key}) async {
+  static Future<Uint8List> decryptMessage(Uint8List package, { SecretKey key }) async {
     final e = EncryptedMessage.fromBuffer(package);
 
-    final bytes = await AES.decryptAES256_GCM(e, key);
+    final bytes = await MessageEncryption.decrypt(e, key);
     await _validatePackage(bytes, key);
     return bytes;
   }

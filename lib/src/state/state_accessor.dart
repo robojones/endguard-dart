@@ -35,6 +35,18 @@ class StateAccessor {
     return p;
   }
 
+  set outgoingEncryptionAlgorithm(Algorithm algorithm) {
+    _state.outgoingEncryptionAlgorithm = algorithm;
+  }
+
+  Algorithm get outgoingEncryptionAlgorithm {
+    if (_state.outgoingEncryptionAlgorithm == Algorithm.UNKNOWN ||
+        _state.outgoingEncryptionAlgorithm == null) {
+      return Algorithm.CHACHA20_POLY1305_HMAC;
+    }
+    return _state.outgoingEncryptionAlgorithm;
+  }
+
   set initializationState(ConnectionState_State s) {
     _state.initializationState = s;
   }

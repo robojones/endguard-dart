@@ -46,6 +46,8 @@ class InitialisationStateManager {
     final currentState = _stateAccessor.initializationState;
     if (o == Operation.ExportState) {
       _beginOperation(o);
+    } else if (o == Operation.UpdateConnectionSettings) {
+      _beginOperation(o);
     } else if (o == Operation.CreateConnectionOffer &&
         currentState == ConnectionState_State.NOT_INITIALIZED) {
       _beginOperation(o);

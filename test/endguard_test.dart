@@ -15,7 +15,7 @@ void main() {
         final b = Connection();
 
         // handshake
-        final welcomePackage = await a.createConnectionOffer();
+        final welcomePackage = await a.createConnectionRequest();
         final connectionConfirmation = await b.applyConnectionOffer(welcomePackage.exportPackage(),
             remoteKey: welcomePackage.exportKey());
         await a.applyConnectionConfirmation(connectionConfirmation.exportPackage(),
@@ -38,7 +38,7 @@ void main() {
         final b = Connection();
 
         // handshake
-        final welcomePackage = await a.createConnectionOffer();
+        final welcomePackage = await a.createConnectionRequest();
         final connectionConfirmation = await b.applyConnectionOffer(welcomePackage.exportPackage(),
             remoteKey: welcomePackage.exportKey());
         await a.applyConnectionConfirmation(connectionConfirmation.exportPackage(),
@@ -61,7 +61,7 @@ void main() {
         final b = Connection();
 
         // handshake
-        final welcomePackage = await a.createConnectionOffer();
+        final welcomePackage = await a.createConnectionRequest();
         final connectionConfirmation = await b.applyConnectionOffer(welcomePackage.exportPackage(),
             remoteKey: welcomePackage.exportKey());
         await a.applyConnectionConfirmation(connectionConfirmation.exportPackage(),
