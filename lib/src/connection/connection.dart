@@ -38,7 +38,12 @@ class Connection {
     _encryption = Encryption(diffieHellmanRatchet, sha256Ratchet);
   }
 
+  /// Returns the current state of the connection.
   Uint8List getState() {
+    _connectionState.beginOperation(Operation.ExportState);
+    // Operation can be completed directly, as is it does not modify the state.
+    // Therefore, no rollback is needed, even if there is an error.
+    _connectionState.completeOperation();
     return _stateAccessor.exportState();
   }
 
