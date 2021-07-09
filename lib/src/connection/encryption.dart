@@ -38,8 +38,8 @@ class Encryption {
     return SecretKeyData(hash.bytes);
   }
 
-  Future<Uint8List> decrypt(Uint8List package) async {
-    final e = EncryptedMessage.fromBuffer(package);
+  Future<Uint8List> decrypt(Uint8List message) async {
+    final e = EncryptedMessage.fromBuffer(message);
 
     // derive incoming key
     final key = await _deriveDecryptionKey();

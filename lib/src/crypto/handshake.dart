@@ -10,11 +10,11 @@ import 'aes.dart';
 final sha = Sha256();
 
 /// A ciphertext of a handshake package and the key used to encrypt it.
-class HandshakePackage {
+class HandshakeMessage {
   final Uint8List _ciphertext;
   final SecretKey _key;
 
-  HandshakePackage(Uint8List ciphertext, {SecretKey key})
+  HandshakeMessage(Uint8List ciphertext, {SecretKey key})
       : _ciphertext = ciphertext,
         _key = key;
 
@@ -50,16 +50,16 @@ class HandshakeEncryption {
   }
 
   /// Encrypts a [package] using its SHA256 hash as key.
-  static Future<HandshakePackage> encryptPackage(Uint8List package) async {
+  static Future<HandshakeMessage> encryptMessage(Uint8List package) async {
     final key = await _hashSHA256(package);
     final e = await AES.encryptAES256_GCM(package, key);
     final bytes = e.writeToBuffer();
 
-    return HandshakePackage(bytes, key: key);
+    return HandshakeMessage(bytes, key: key);
   }
 
   /// Decrypts an encrypted [package] using the [key].
-  static Future<Uint8List> decryptPackage(Uint8List package, {SecretKey key}) async {
+  static Future<Uint8List> decryptMessage(Uint8List package, {SecretKey key}) async {
     final e = EncryptedMessage.fromBuffer(package);
 
     final bytes = await AES.decryptAES256_GCM(e, key);

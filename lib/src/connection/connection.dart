@@ -56,7 +56,7 @@ class Connection {
 
   /// Creates a new connection offer.
   /// This is the first step of the handshake.
-  Future<HandshakePackage> createConnectionOffer() async {
+  Future<HandshakeMessage> createConnectionOffer() async {
     _connectionState.beginOperation(Operation.CreateConnectionOffer);
     try {
       final p = await _initialization.createConnectionOffer();
@@ -71,12 +71,12 @@ class Connection {
   /// Applies a connection offer from another device.
   /// Returns the connection confirmation for the other device.
   /// This completes the handshake on this device.
-  /// The device is then ready to encrypt and decrypt packages.
-  Future<HandshakePackage> applyConnectionOffer(Uint8List welcomePackage,
+  /// The device is then ready to encrypt and decrypt messages.
+  Future<HandshakeMessage> applyConnectionOffer(Uint8List welcomeMessage,
       {SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionOffer);
     try {
-      final p = await _initialization.applyConnectionOffer(welcomePackage,
+      final p = await _initialization.applyConnectionOffer(welcomeMessage,
           remoteKey: remoteKey);
       _connectionState.completeOperation();
       return p;
@@ -88,7 +88,7 @@ class Connection {
 
   /// Applies the connection confirmation from the other device.
   /// This completes the handshake for this device.
-  /// The device is then ready to encrypt and decrypt packages.
+  /// The device is then ready to encrypt and decrypt messages.
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
       {SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionConfirmation);
@@ -104,10 +104,10 @@ class Connection {
   }
 
   /// Decrypts an incoming message.
-  Future<Uint8List> decrypt(Uint8List package) async {
+  Future<Uint8List> decrypt(Uint8List message) async {
     _connectionState.beginOperation(Operation.DecryptMessage);
     try {
-      final p = await _encryption.decrypt(package);
+      final p = await _encryption.decrypt(message);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
