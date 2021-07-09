@@ -3,8 +3,10 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 
+/// The AES256-GCM block cipher encryption.
 final aes = AesGcm.with256bits();
 
+/// A simplified API for the AES256-GCM block cipher encryption.
 class AES {
   /// Decrypts an AES256-GCM [encryptedMessage] using the [key]
   /// and authenticates the additional authenticated data [aad]

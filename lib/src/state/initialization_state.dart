@@ -7,7 +7,7 @@ class InitialisationStateManager {
   final StateAccessor _stateAccessor;
 
   Operation _activeOperation;
-  Uint8List _stateBackup;
+  Uint8List _stateSnapshot;
 
   InitialisationStateManager(this._stateAccessor);
 
@@ -17,7 +17,7 @@ class InitialisationStateManager {
           'can not start `${o.toString()}`: operation `${_activeOperation.toString()}` is not complete yet');
     }
     _activeOperation = o;
-    _stateBackup = _stateAccessor.exportState();
+    _stateSnapshot = _stateAccessor.exportState();
   }
 
   void _completeOperation({bool restoreState}) {
@@ -27,9 +27,14 @@ class InitialisationStateManager {
     _activeOperation = null;
 
     if (restoreState) {
-      _stateAccessor.importState(_stateBackup);
+      _stateAccessor.importState(_stateSnapshot);
     }
-    _stateBackup = null;
+    _stateSnapshot = null;
+  }
+
+  /// isIdle is true while there is no active operation.
+  bool get isIdle {
+    return _activeOperation == null;
   }
 
   /// beginOperation checks if an operation can be performed in the current state of the connection.
@@ -38,8 +43,9 @@ class InitialisationStateManager {
   /// An Error is thrown if beginOperation is called before the previous operation was completed with completeOperation() or abortOperation().
   void beginOperation(Operation o) {
     final currentState = _stateAccessor.initializationState;
-
-    if (o == Operation.CreateConnectionOffer &&
+    if (o == Operation.ExportState) {
+      _beginOperation(o);
+    } else if (o == Operation.CreateConnectionOffer &&
         currentState == State.NOT_INITIALIZED) {
       _beginOperation(o);
     } else if (o == Operation.ApplyConnectionOffer &&

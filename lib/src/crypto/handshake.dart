@@ -6,16 +6,15 @@ import 'package:endguard/src/protos/protocol.pb.dart';
 
 import 'aes.dart';
 
-/// The SHA256 hash algorithm that is used by the InitialPackageEncryption.
+/// The hash algorithm that is used by the InitialPackageEncryption.
 final sha = Sha256();
 
-/// An EncryptedPackage contains the ciphertext of a package
-/// and the key used to encrypt it.
-class EncryptedPackage {
+/// A ciphertext of a handshake package and the key used to encrypt it.
+class HandshakeMessage {
   final Uint8List _ciphertext;
   final SecretKey _key;
 
-  EncryptedPackage(Uint8List ciphertext, {SecretKey key})
+  HandshakeMessage(Uint8List ciphertext, {SecretKey key})
       : _ciphertext = ciphertext,
         _key = key;
 
@@ -30,19 +29,19 @@ class EncryptedPackage {
   }
 }
 
-/// The InitialPackageEncryption is used to encrypt the packages
-/// for the handshake.
-class InitialPackageEncryption {
+/// The encryption for the packages of the handshake.
+/// Handshake packages are encrypted using the SHA256 hash of their plaintext
+/// as key.
+class HandshakeEncryption {
   /// Generates the SHA256 hash of the [plaintext].
-  Future<SecretKey> _hashSHA256(Uint8List plaintext) async {
+  static Future<SecretKey> _hashSHA256(Uint8List plaintext) async {
     final hash = await sha.hash(plaintext);
     final key = SecretKeyData(hash.bytes);
     return key;
   }
 
-  /// Validates the [plaintext] and the [key] match.
-  /// The [key] must be the exact SHA256 hash of the [plaintext].
-  Future<void> _validatePackage(Uint8List plaintext, SecretKey key) async {
+  /// Validates that the [key] actually equals the SHA256 hash of the [plaintext].
+  static Future<void> _validatePackage(Uint8List plaintext, SecretKey key) async {
     final checksum = await _hashSHA256(plaintext);
     if (checksum != key) {
       throw InvalidHandshakePackageException(
@@ -51,16 +50,16 @@ class InitialPackageEncryption {
   }
 
   /// Encrypts a [package] using its SHA256 hash as key.
-  Future<EncryptedPackage> encryptPackage(Uint8List package) async {
+  static Future<HandshakeMessage> encryptMessage(Uint8List package) async {
     final key = await _hashSHA256(package);
     final e = await AES.encryptAES256_GCM(package, key);
     final bytes = e.writeToBuffer();
 
-    return EncryptedPackage(bytes, key: key);
+    return HandshakeMessage(bytes, key: key);
   }
 
   /// Decrypts an encrypted [package] using the [key].
-  Future<Uint8List> decryptPackage(Uint8List package, {SecretKey key}) async {
+  static Future<Uint8List> decryptMessage(Uint8List package, {SecretKey key}) async {
     final e = EncryptedMessage.fromBuffer(package);
 
     final bytes = await AES.decryptAES256_GCM(e, key);

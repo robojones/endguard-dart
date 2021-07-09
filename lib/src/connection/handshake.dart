@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:endguard/src/encryption/handshake.dart';
+import 'package:endguard/src/crypto/handshake.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/ratchets/diffie_hellman.dart';
 import 'package:endguard/src/ratchets/sha_256.dart';
@@ -9,12 +9,11 @@ import 'package:endguard/src/ratchets/sha_256.dart';
 class Handshake {
   final DiffieHellmanRatchet _diffieHellmanRatchet;
   final SHA256Ratchet _sha256Ratchet;
-  final InitialPackageEncryption _encryption;
 
   Handshake(
-      this._diffieHellmanRatchet, this._sha256Ratchet, this._encryption);
+      this._diffieHellmanRatchet, this._sha256Ratchet);
 
-  Future<EncryptedPackage> createConnectionOffer() async {
+  Future<HandshakeMessage> createConnectionOffer() async {
     final k =
         await _diffieHellmanRatchet.generateAndAddLocalDiffieHellmanKeyPair();
 
@@ -23,13 +22,13 @@ class Handshake {
     w.newDiffieHellmanPublicKey = pk.bytes;
     final plaintext = w.writeToBuffer();
 
-    return await _encryption.encryptPackage(plaintext);
+    return await HandshakeEncryption.encryptMessage(plaintext);
   }
 
-  Future<EncryptedPackage> applyConnectionOffer(Uint8List welcomePackage,
+  Future<HandshakeMessage> applyConnectionOffer(Uint8List welcomePackage,
       {SecretKey remoteKey}) async {
     final bytes =
-        await _encryption.decryptPackage(welcomePackage, key: remoteKey);
+        await HandshakeEncryption.decryptMessage(welcomePackage, key: remoteKey);
     final p = ConnectionOffer.fromBuffer(bytes);
 
     // set remote public key in Diffie-Hellman ratchet
@@ -63,13 +62,13 @@ class Handshake {
     oc.incomingSHA256RatchetInitValue = incomingSHA256RatchetInitValue.bytes;
     oc.outgoingSHA256RatchetInitValue = outgoingSHA256RatchetInitValue.bytes;
 
-    return await _encryption.encryptPackage(oc.writeToBuffer());
+    return await HandshakeEncryption.encryptMessage(oc.writeToBuffer());
   }
 
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
       {SecretKey remoteKey}) async {
     final bytes =
-        await _encryption.decryptPackage(connectionConfirmation, key: remoteKey);
+        await HandshakeEncryption.decryptMessage(connectionConfirmation, key: remoteKey);
     final oc = ConnectionConfirmation.fromBuffer(bytes);
 
     final localPk = SimplePublicKey(oc.connectionOfferDiffieHellmanPublicKey,

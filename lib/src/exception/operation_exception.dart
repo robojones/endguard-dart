@@ -3,6 +3,7 @@ import 'package:endguard/src/protos/protocol.pb.dart';
 export 'package:endguard/src/protos/protocol.pb.dart' show State;
 
 enum Operation {
+  ExportState,
   CreateConnectionOffer,
   ApplyConnectionOffer,
   ApplyConnectionConfirmation,
@@ -12,12 +13,14 @@ enum Operation {
 
 String _operationDescription(Operation op) {
   switch (op) {
+    case Operation.ExportState:
+      return 'export the connection state';
     case Operation.CreateConnectionOffer:
       return 'create a new ConnectionOffer';
     case Operation.ApplyConnectionOffer:
       return 'apply a ConnectionOffer';
     case Operation.ApplyConnectionConfirmation:
-      return 'apply an ConnectionConfirmation package';
+      return 'apply a ConnectionConfirmation package';
     case Operation.EncryptMessage:
       return 'encrypt a message';
     case Operation.DecryptMessage:
