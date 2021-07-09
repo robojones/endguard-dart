@@ -35,11 +35,11 @@ class StateAccessor {
     return p;
   }
 
-  set initializationState(State s) {
+  set initializationState(ConnectionState_State s) {
     _state.initializationState = s;
   }
 
-  State get initializationState {
+  ConnectionState_State get initializationState {
     return _state.initializationState;
   }
 

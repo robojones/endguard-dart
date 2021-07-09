@@ -30,13 +30,13 @@ String _operationDescription(Operation op) {
   }
 }
 
-String _stateDescription(State s) {
+String _stateDescription(ConnectionState_State s) {
   switch (s) {
-    case State.NOT_INITIALIZED:
+    case ConnectionState_State.NOT_INITIALIZED:
       return 'connection is not initialized';
-    case State.HANDSHAKE:
+    case ConnectionState_State.HANDSHAKE:
       return 'handshake is not complete yet';
-    case State.ESTABLISHED:
+    case ConnectionState_State.ESTABLISHED:
       return 'connection is established';
     default:
       return 'connection is in an unknown state';
@@ -44,7 +44,7 @@ String _stateDescription(State s) {
 }
 
 class InvalidOperationException implements Exception {
-  final State state;
+  final ConnectionState_State state;
   final Operation operation;
   final String message;
 
