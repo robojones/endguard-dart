@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 import 'test_context.dart';
 
 void main() {
-  group('connection state rollback on error', () {
+  group('connection state:', () {
     void testExpectInvalidOperationException(
         String description, Function(TestContext) t) {
       test('should throw an InvalidOperationException when ${description}',
