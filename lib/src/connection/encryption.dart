@@ -17,7 +17,8 @@ class Encryption {
     final diffieHellmanRatchetValue =
         _diffieHellmanRatchet.outgoingRatchetValue;
 
-    return SecretKeyData(diffieHellmanRatchetValue.bytes + sha256RatchetValue.bytes);
+    return SecretKeyData(
+        diffieHellmanRatchetValue.bytes + sha256RatchetValue.bytes);
   }
 
   Future<SecretKeyData> _gatherDecryptionKeyMaterial() async {
@@ -25,7 +26,8 @@ class Encryption {
     final diffieHellmanRatchetValue =
         _diffieHellmanRatchet.incomingRatchetValue;
 
-    return SecretKeyData(diffieHellmanRatchetValue.bytes + sha256RatchetValue.bytes);
+    return SecretKeyData(
+        diffieHellmanRatchetValue.bytes + sha256RatchetValue.bytes);
   }
 
   Future<Uint8List> decrypt(Uint8List message) async {
@@ -47,7 +49,7 @@ class Encryption {
     return envelope.payload;
   }
 
-  Future<Uint8List> encrypt(Uint8List plaintext, { Algorithm algorithm }) async {
+  Future<Uint8List> encrypt(Uint8List plaintext, {Algorithm algorithm}) async {
     // create envelope
     final localKeyPair =
         await _diffieHellmanRatchet.generateAndAddLocalDiffieHellmanKeyPair();
@@ -61,7 +63,8 @@ class Encryption {
 
     // encrypt
     final keyMaterial = await _gatherEncryptionKeyMaterial();
-    final e = await MessageEncryption.encrypt(envelopeBytes, keyMaterial, algorithm: algorithm);
+    final e = await MessageEncryption.encrypt(envelopeBytes, keyMaterial,
+        algorithm: algorithm);
 
     // advance ratchets
     await _diffieHellmanRatchet.advanceOutgoingDiffieHellmanRatchet();

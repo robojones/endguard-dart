@@ -5,10 +5,13 @@ import 'package:endguard/src/protos/protocol.pb.dart';
 
 /// The AES256-GCM block cipher algorithm.
 final aes = AesGcm.with256bits();
+
 /// The ChaCha20-Poly1305 stream cipher algorithm.
 final chaCha = Chacha20.poly1305Aead();
+
 /// The HMAC MAC algorithm.
 final hmac = Hmac.sha256();
+
 /// The HKDF key derivation algorithm with 256 bit key length.
 final hkdf = Hkdf(hmac: hmac, outputLength: 32);
 
@@ -21,7 +24,8 @@ class MessageEncryption {
       case Algorithm.AES256_GCM_HMAC:
         return aes;
       default:
-        throw UnimplementedError('Cipher ${algorithm.toString()} not supported');
+        throw UnimplementedError(
+            'Cipher ${algorithm.toString()} not supported');
     }
   }
 
@@ -31,7 +35,8 @@ class MessageEncryption {
       case Algorithm.AES256_GCM_HMAC:
         return hkdf;
       default:
-        throw UnimplementedError('Cipher ${algorithm.toString()} not supported');
+        throw UnimplementedError(
+            'Cipher ${algorithm.toString()} not supported');
     }
   }
 
@@ -41,14 +46,16 @@ class MessageEncryption {
       case Algorithm.AES256_GCM_HMAC:
         return hmac;
       default:
-        throw UnimplementedError('Cipher ${algorithm.toString()} not supported');
+        throw UnimplementedError(
+            'Cipher ${algorithm.toString()} not supported');
     }
   }
 
   /// Decrypts an AES256-GCM [encryptedMessage] using the [key]
   /// and authenticates the additional authenticated data [aad]
   static Future<Uint8List> decrypt(
-      EncryptedMessage encryptedMessage, SecretKeyData keyMaterial, { Uint8List aad }) async {
+      EncryptedMessage encryptedMessage, SecretKeyData keyMaterial,
+      {Uint8List aad}) async {
     aad ??= Uint8List(0);
 
     // select algorithms
@@ -60,17 +67,22 @@ class MessageEncryption {
     // create secret box
     final mac = Mac(encryptedMessage.mac);
     final secondaryMac = Mac(encryptedMessage.secondaryMac);
-    final secretBox = SecretBox(encryptedMessage.ciphertext, nonce: encryptedMessage.nonce, mac: mac);
+    final secretBox = SecretBox(encryptedMessage.ciphertext,
+        nonce: encryptedMessage.nonce, mac: mac);
 
     // validate secondary mac
-    final secondaryMacKey = await keyDerivation.deriveKey(secretKey: keyMaterial, nonce: encryptedMessage.secondaryMacNonce);
-    final wantSecondaryMac = await macAlgorithm.calculateMac(encryptedMessage.ciphertext + aad, secretKey: secondaryMacKey);
+    final secondaryMacKey = await keyDerivation.deriveKey(
+        secretKey: keyMaterial, nonce: encryptedMessage.secondaryMacNonce);
+    final wantSecondaryMac = await macAlgorithm.calculateMac(
+        encryptedMessage.ciphertext + aad,
+        secretKey: secondaryMacKey);
     if (secondaryMac != wantSecondaryMac) {
       throw SecretBoxAuthenticationError(secretBox: secretBox);
     }
 
     // decryption
-    final encryptionKey = await keyDerivation.deriveKey(secretKey: keyMaterial, nonce: encryptedMessage.nonce);
+    final encryptionKey = await keyDerivation.deriveKey(
+        secretKey: keyMaterial, nonce: encryptedMessage.nonce);
     final plaintext = await cipher.decrypt(
       secretBox,
       secretKey: encryptionKey,
@@ -83,7 +95,8 @@ class MessageEncryption {
   /// Encrypts a [plaintext] message using the [key]
   /// and includes the additional authenticated data [aad] in the mac.
   static Future<EncryptedMessage> encrypt(
-      Uint8List plaintext, SecretKeyData keyMaterial, { Uint8List aad, Algorithm algorithm }) async {
+      Uint8List plaintext, SecretKeyData keyMaterial,
+      {Uint8List aad, Algorithm algorithm}) async {
     aad ??= Uint8List(0);
 
     // select algorithms
@@ -93,7 +106,8 @@ class MessageEncryption {
 
     // encryption
     final nonce = cipher.newNonce();
-    final encryptionKey = await keyDerivation.deriveKey(secretKey: keyMaterial, nonce: nonce);
+    final encryptionKey =
+        await keyDerivation.deriveKey(secretKey: keyMaterial, nonce: nonce);
     final secretBox = await cipher.encrypt(
       plaintext,
       secretKey: encryptionKey,
@@ -103,8 +117,10 @@ class MessageEncryption {
 
     // calculate secondary mac
     final secondaryMacNone = cipher.newNonce();
-    final secondaryMacKey = await keyDerivation.deriveKey(secretKey: keyMaterial, nonce: secondaryMacNone);
-    final secondaryMac = await macAlgorithm.calculateMac(secretBox.cipherText + aad, secretKey: secondaryMacKey);
+    final secondaryMacKey = await keyDerivation.deriveKey(
+        secretKey: keyMaterial, nonce: secondaryMacNone);
+    final secondaryMac = await macAlgorithm
+        .calculateMac(secretBox.cipherText + aad, secretKey: secondaryMacKey);
 
     final e = EncryptedMessage();
     e.algorithm = algorithm;
