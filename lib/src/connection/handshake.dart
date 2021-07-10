@@ -25,10 +25,10 @@ class Handshake {
     return await HandshakeEncryption.encryptMessage(plaintext, algorithm: algorithm);
   }
 
-  Future<HandshakeMessage> applyConnectionOffer(Uint8List welcomePackage,
+  Future<HandshakeMessage> applyConnectionRequest(Uint8List connectionRequest,
       {SecretKey remoteKey, Algorithm algorithm}) async {
     final bytes =
-        await HandshakeEncryption.decryptMessage(welcomePackage, key: remoteKey);
+        await HandshakeEncryption.decryptMessage(connectionRequest, key: remoteKey);
     final p = ConnectionOffer.fromBuffer(bytes);
 
     // set remote public key in Diffie-Hellman ratchet

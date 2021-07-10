@@ -27,7 +27,7 @@ class Connection {
 
   /// Creates a connection from an existing connection state.
   /// To persist the connection state, use the [getState] and save the result.
-  Connection.fromState(ConnectionState state) {
+  Connection.fromState(Uint8List state) {
     final s = StateAccessor.withState(state);
     _init(s);
   }
@@ -83,11 +83,11 @@ class Connection {
   /// Returns the connection confirmation for the other device.
   /// This completes the handshake on this device.
   /// The device is then ready to encrypt and decrypt messages.
-  Future<HandshakeMessage> applyConnectionOffer(Uint8List welcomeMessage,
+  Future<HandshakeMessage> applyConnectionRequest(Uint8List welcomeMessage,
       {SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionOffer);
     try {
-      final p = await _handshake.applyConnectionOffer(welcomeMessage,
+      final p = await _handshake.applyConnectionRequest(welcomeMessage,
           remoteKey: remoteKey, algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
       _connectionState.completeOperation();
       return p;

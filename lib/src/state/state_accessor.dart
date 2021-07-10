@@ -8,7 +8,7 @@ class StateAccessor {
 
   StateAccessor() : _state = ConnectionState();
 
-  StateAccessor.withState(ConnectionState s) : _state = s;
+  StateAccessor.withState(Uint8List s) : _state = ConnectionState.fromBuffer(s);
 
   Uint8List exportState() {
     return _state.writeToBuffer();
