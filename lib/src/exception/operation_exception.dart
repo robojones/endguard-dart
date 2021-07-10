@@ -3,18 +3,21 @@ import 'package:endguard/src/protos/protocol.pb.dart';
 export 'package:endguard/src/protos/protocol.pb.dart' show State;
 
 enum Operation {
-  ExportState,
-  CreateConnectionOffer,
-  ApplyConnectionOffer,
   ApplyConnectionConfirmation,
-  EncryptMessage,
+  ApplyConnectionOffer,
+  CreateConnectionOffer,
   DecryptMessage,
+  EncryptMessage,
+  ExportState,
+  UpdateConnectionSettings,
 }
 
 String _operationDescription(Operation op) {
   switch (op) {
     case Operation.ExportState:
       return 'export the connection state';
+    case Operation.UpdateConnectionSettings:
+      return 'update the settings for the connection';
     case Operation.CreateConnectionOffer:
       return 'create a new ConnectionOffer';
     case Operation.ApplyConnectionOffer:
@@ -26,17 +29,17 @@ String _operationDescription(Operation op) {
     case Operation.DecryptMessage:
       return 'decrypt a message';
     default:
-      throw 'an unknown operation';
+      return '<unknown operation>';
   }
 }
 
-String _stateDescription(State s) {
+String _stateDescription(ConnectionState_State s) {
   switch (s) {
-    case State.NOT_INITIALIZED:
+    case ConnectionState_State.NOT_INITIALIZED:
       return 'connection is not initialized';
-    case State.HANDSHAKE:
+    case ConnectionState_State.HANDSHAKE:
       return 'handshake is not complete yet';
-    case State.ESTABLISHED:
+    case ConnectionState_State.ESTABLISHED:
       return 'connection is established';
     default:
       return 'connection is in an unknown state';
@@ -44,7 +47,7 @@ String _stateDescription(State s) {
 }
 
 class InvalidOperationException implements Exception {
-  final State state;
+  final ConnectionState_State state;
   final Operation operation;
   final String message;
 

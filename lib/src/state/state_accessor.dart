@@ -8,7 +8,7 @@ class StateAccessor {
 
   StateAccessor() : _state = ConnectionState();
 
-  StateAccessor.withState(ConnectionState s) : _state = s;
+  StateAccessor.withState(Uint8List s) : _state = ConnectionState.fromBuffer(s);
 
   Uint8List exportState() {
     return _state.writeToBuffer();
@@ -35,11 +35,23 @@ class StateAccessor {
     return p;
   }
 
-  set initializationState(State s) {
+  set outgoingEncryptionAlgorithm(Algorithm algorithm) {
+    _state.outgoingEncryptionAlgorithm = algorithm;
+  }
+
+  Algorithm get outgoingEncryptionAlgorithm {
+    if (_state.outgoingEncryptionAlgorithm == Algorithm.UNKNOWN ||
+        _state.outgoingEncryptionAlgorithm == null) {
+      return Algorithm.CHACHA20_POLY1305_HMAC;
+    }
+    return _state.outgoingEncryptionAlgorithm;
+  }
+
+  set initializationState(ConnectionState_State s) {
     _state.initializationState = s;
   }
 
-  State get initializationState {
+  ConnectionState_State get initializationState {
     return _state.initializationState;
   }
 

@@ -15,9 +15,12 @@ export 'protocol.pbenum.dart';
 
 class EncryptedMessage extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'EncryptedMessage', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'endguard'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nonce', $pb.PbFieldType.OY)
-    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'ciphertext', $pb.PbFieldType.OY)
+    ..e<Algorithm>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'algorithm', $pb.PbFieldType.OE, defaultOrMaker: Algorithm.UNKNOWN, valueOf: Algorithm.valueOf, enumValues: Algorithm.values)
+    ..a<$core.List<$core.int>>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'nonce', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'mac', $pb.PbFieldType.OY)
+    ..a<$core.List<$core.int>>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'secondaryMacNonce', $pb.PbFieldType.OY, protoName: 'secondaryMacNonce')
+    ..a<$core.List<$core.int>>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'secondaryMac', $pb.PbFieldType.OY, protoName: 'secondaryMac')
+    ..a<$core.List<$core.int>>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'ciphertext', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
@@ -45,22 +48,22 @@ class EncryptedMessage extends $pb.GeneratedMessage {
   static EncryptedMessage _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<$core.int> get nonce => $_getN(0);
+  Algorithm get algorithm => $_getN(0);
   @$pb.TagNumber(1)
-  set nonce($core.List<$core.int> v) { $_setBytes(0, v); }
+  set algorithm(Algorithm v) { setField(1, v); }
   @$pb.TagNumber(1)
-  $core.bool hasNonce() => $_has(0);
+  $core.bool hasAlgorithm() => $_has(0);
   @$pb.TagNumber(1)
-  void clearNonce() => clearField(1);
+  void clearAlgorithm() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.List<$core.int> get ciphertext => $_getN(1);
+  $core.List<$core.int> get nonce => $_getN(1);
   @$pb.TagNumber(2)
-  set ciphertext($core.List<$core.int> v) { $_setBytes(1, v); }
+  set nonce($core.List<$core.int> v) { $_setBytes(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasCiphertext() => $_has(1);
+  $core.bool hasNonce() => $_has(1);
   @$pb.TagNumber(2)
-  void clearCiphertext() => clearField(2);
+  void clearNonce() => clearField(2);
 
   @$pb.TagNumber(3)
   $core.List<$core.int> get mac => $_getN(2);
@@ -70,11 +73,38 @@ class EncryptedMessage extends $pb.GeneratedMessage {
   $core.bool hasMac() => $_has(2);
   @$pb.TagNumber(3)
   void clearMac() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.List<$core.int> get secondaryMacNonce => $_getN(3);
+  @$pb.TagNumber(4)
+  set secondaryMacNonce($core.List<$core.int> v) { $_setBytes(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasSecondaryMacNonce() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSecondaryMacNonce() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.List<$core.int> get secondaryMac => $_getN(4);
+  @$pb.TagNumber(5)
+  set secondaryMac($core.List<$core.int> v) { $_setBytes(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasSecondaryMac() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSecondaryMac() => clearField(5);
+
+  @$pb.TagNumber(10)
+  $core.List<$core.int> get ciphertext => $_getN(5);
+  @$pb.TagNumber(10)
+  set ciphertext($core.List<$core.int> v) { $_setBytes(5, v); }
+  @$pb.TagNumber(10)
+  $core.bool hasCiphertext() => $_has(5);
+  @$pb.TagNumber(10)
+  void clearCiphertext() => clearField(10);
 }
 
 class ConnectionOffer extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConnectionOffer', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'endguard'), createEmptyInstance: create)
-    ..a<$core.List<$core.int>>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'newDiffieHellmanPublicKey', $pb.PbFieldType.OY, protoName: 'newDiffieHellmanPublicKey')
+    ..a<$core.List<$core.int>>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'newDiffieHellmanPublicKey', $pb.PbFieldType.OY, protoName: 'newDiffieHellmanPublicKey')
     ..hasRequiredFields = false
   ;
 
@@ -101,14 +131,14 @@ class ConnectionOffer extends $pb.GeneratedMessage {
   static ConnectionOffer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionOffer>(create);
   static ConnectionOffer _defaultInstance;
 
-  @$pb.TagNumber(10)
+  @$pb.TagNumber(1)
   $core.List<$core.int> get newDiffieHellmanPublicKey => $_getN(0);
-  @$pb.TagNumber(10)
+  @$pb.TagNumber(1)
   set newDiffieHellmanPublicKey($core.List<$core.int> v) { $_setBytes(0, v); }
-  @$pb.TagNumber(10)
+  @$pb.TagNumber(1)
   $core.bool hasNewDiffieHellmanPublicKey() => $_has(0);
-  @$pb.TagNumber(10)
-  void clearNewDiffieHellmanPublicKey() => clearField(10);
+  @$pb.TagNumber(1)
+  void clearNewDiffieHellmanPublicKey() => clearField(1);
 }
 
 class ConnectionConfirmation extends $pb.GeneratedMessage {
@@ -300,7 +330,8 @@ class DiffieHellmanKeyPair extends $pb.GeneratedMessage {
 
 class ConnectionState extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConnectionState', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'endguard'), createEmptyInstance: create)
-    ..e<State>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'initializationState', $pb.PbFieldType.OE, protoName: 'initializationState', defaultOrMaker: State.NOT_INITIALIZED, valueOf: State.valueOf, enumValues: State.values)
+    ..e<ConnectionState_State>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'initializationState', $pb.PbFieldType.OE, protoName: 'initializationState', defaultOrMaker: ConnectionState_State.NOT_INITIALIZED, valueOf: ConnectionState_State.valueOf, enumValues: ConnectionState_State.values)
+    ..e<Algorithm>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outgoingEncryptionAlgorithm', $pb.PbFieldType.OE, protoName: 'outgoingEncryptionAlgorithm', defaultOrMaker: Algorithm.UNKNOWN, valueOf: Algorithm.valueOf, enumValues: Algorithm.values)
     ..a<$core.List<$core.int>>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'remoteDiffieHellmanKey', $pb.PbFieldType.OY, protoName: 'remoteDiffieHellmanKey')
     ..pc<DiffieHellmanKeyPair>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'localDiffieHellmanKeyPairs', $pb.PbFieldType.PM, protoName: 'localDiffieHellmanKeyPairs', subBuilder: DiffieHellmanKeyPair.create)
     ..a<$core.List<$core.int>>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'incomingSHA256Ratchet', $pb.PbFieldType.OY, protoName: 'incomingSHA256Ratchet')
@@ -334,59 +365,68 @@ class ConnectionState extends $pb.GeneratedMessage {
   static ConnectionState _defaultInstance;
 
   @$pb.TagNumber(1)
-  State get initializationState => $_getN(0);
+  ConnectionState_State get initializationState => $_getN(0);
   @$pb.TagNumber(1)
-  set initializationState(State v) { setField(1, v); }
+  set initializationState(ConnectionState_State v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasInitializationState() => $_has(0);
   @$pb.TagNumber(1)
   void clearInitializationState() => clearField(1);
 
+  @$pb.TagNumber(2)
+  Algorithm get outgoingEncryptionAlgorithm => $_getN(1);
+  @$pb.TagNumber(2)
+  set outgoingEncryptionAlgorithm(Algorithm v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasOutgoingEncryptionAlgorithm() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearOutgoingEncryptionAlgorithm() => clearField(2);
+
   @$pb.TagNumber(8)
-  $core.List<$core.int> get remoteDiffieHellmanKey => $_getN(1);
+  $core.List<$core.int> get remoteDiffieHellmanKey => $_getN(2);
   @$pb.TagNumber(8)
-  set remoteDiffieHellmanKey($core.List<$core.int> v) { $_setBytes(1, v); }
+  set remoteDiffieHellmanKey($core.List<$core.int> v) { $_setBytes(2, v); }
   @$pb.TagNumber(8)
-  $core.bool hasRemoteDiffieHellmanKey() => $_has(1);
+  $core.bool hasRemoteDiffieHellmanKey() => $_has(2);
   @$pb.TagNumber(8)
   void clearRemoteDiffieHellmanKey() => clearField(8);
 
   @$pb.TagNumber(9)
-  $core.List<DiffieHellmanKeyPair> get localDiffieHellmanKeyPairs => $_getList(2);
+  $core.List<DiffieHellmanKeyPair> get localDiffieHellmanKeyPairs => $_getList(3);
 
   @$pb.TagNumber(12)
-  $core.List<$core.int> get incomingSHA256Ratchet => $_getN(3);
+  $core.List<$core.int> get incomingSHA256Ratchet => $_getN(4);
   @$pb.TagNumber(12)
-  set incomingSHA256Ratchet($core.List<$core.int> v) { $_setBytes(3, v); }
+  set incomingSHA256Ratchet($core.List<$core.int> v) { $_setBytes(4, v); }
   @$pb.TagNumber(12)
-  $core.bool hasIncomingSHA256Ratchet() => $_has(3);
+  $core.bool hasIncomingSHA256Ratchet() => $_has(4);
   @$pb.TagNumber(12)
   void clearIncomingSHA256Ratchet() => clearField(12);
 
   @$pb.TagNumber(13)
-  $core.List<$core.int> get outgoingSHA256Ratchet => $_getN(4);
+  $core.List<$core.int> get outgoingSHA256Ratchet => $_getN(5);
   @$pb.TagNumber(13)
-  set outgoingSHA256Ratchet($core.List<$core.int> v) { $_setBytes(4, v); }
+  set outgoingSHA256Ratchet($core.List<$core.int> v) { $_setBytes(5, v); }
   @$pb.TagNumber(13)
-  $core.bool hasOutgoingSHA256Ratchet() => $_has(4);
+  $core.bool hasOutgoingSHA256Ratchet() => $_has(5);
   @$pb.TagNumber(13)
   void clearOutgoingSHA256Ratchet() => clearField(13);
 
   @$pb.TagNumber(14)
-  $core.List<$core.int> get incomingDiffieHellmanRatchet => $_getN(5);
+  $core.List<$core.int> get incomingDiffieHellmanRatchet => $_getN(6);
   @$pb.TagNumber(14)
-  set incomingDiffieHellmanRatchet($core.List<$core.int> v) { $_setBytes(5, v); }
+  set incomingDiffieHellmanRatchet($core.List<$core.int> v) { $_setBytes(6, v); }
   @$pb.TagNumber(14)
-  $core.bool hasIncomingDiffieHellmanRatchet() => $_has(5);
+  $core.bool hasIncomingDiffieHellmanRatchet() => $_has(6);
   @$pb.TagNumber(14)
   void clearIncomingDiffieHellmanRatchet() => clearField(14);
 
   @$pb.TagNumber(15)
-  $core.List<$core.int> get outgoingDiffieHellmanRatchet => $_getN(6);
+  $core.List<$core.int> get outgoingDiffieHellmanRatchet => $_getN(7);
   @$pb.TagNumber(15)
-  set outgoingDiffieHellmanRatchet($core.List<$core.int> v) { $_setBytes(6, v); }
+  set outgoingDiffieHellmanRatchet($core.List<$core.int> v) { $_setBytes(7, v); }
   @$pb.TagNumber(15)
-  $core.bool hasOutgoingDiffieHellmanRatchet() => $_has(6);
+  $core.bool hasOutgoingDiffieHellmanRatchet() => $_has(7);
   @$pb.TagNumber(15)
   void clearOutgoingDiffieHellmanRatchet() => clearField(15);
 }

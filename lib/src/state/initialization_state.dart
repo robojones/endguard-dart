@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:endguard/src/exception/operation_exception.dart';
+import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/state/state_accessor.dart';
 
 class InitialisationStateManager {
@@ -45,20 +46,22 @@ class InitialisationStateManager {
     final currentState = _stateAccessor.initializationState;
     if (o == Operation.ExportState) {
       _beginOperation(o);
+    } else if (o == Operation.UpdateConnectionSettings) {
+      _beginOperation(o);
     } else if (o == Operation.CreateConnectionOffer &&
-        currentState == State.NOT_INITIALIZED) {
+        currentState == ConnectionState_State.NOT_INITIALIZED) {
       _beginOperation(o);
     } else if (o == Operation.ApplyConnectionOffer &&
-        currentState == State.NOT_INITIALIZED) {
+        currentState == ConnectionState_State.NOT_INITIALIZED) {
       _beginOperation(o);
     } else if (o == Operation.ApplyConnectionConfirmation &&
-        currentState == State.HANDSHAKE) {
+        currentState == ConnectionState_State.HANDSHAKE) {
       _beginOperation(o);
     } else if (o == Operation.EncryptMessage &&
-        currentState == State.ESTABLISHED) {
+        currentState == ConnectionState_State.ESTABLISHED) {
       _beginOperation(o);
     } else if (o == Operation.DecryptMessage &&
-        currentState == State.ESTABLISHED) {
+        currentState == ConnectionState_State.ESTABLISHED) {
       _beginOperation(o);
     } else {
       throw InvalidOperationException(currentState, o);
@@ -76,11 +79,11 @@ class InitialisationStateManager {
     var o = _activeOperation;
 
     if (o == Operation.CreateConnectionOffer) {
-      _stateAccessor.initializationState = State.HANDSHAKE;
+      _stateAccessor.initializationState = ConnectionState_State.HANDSHAKE;
     } else if (o == Operation.ApplyConnectionOffer) {
-      _stateAccessor.initializationState = State.ESTABLISHED;
+      _stateAccessor.initializationState = ConnectionState_State.ESTABLISHED;
     } else if (o == Operation.ApplyConnectionConfirmation) {
-      _stateAccessor.initializationState = State.ESTABLISHED;
+      _stateAccessor.initializationState = ConnectionState_State.ESTABLISHED;
     }
 
     _completeOperation(restoreState: false);

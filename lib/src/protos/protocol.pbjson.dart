@@ -5,28 +5,31 @@
 // @dart = 2.3
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
-const State$json = const {
-  '1': 'State',
+const Algorithm$json = const {
+  '1': 'Algorithm',
   '2': const [
-    const {'1': 'NOT_INITIALIZED', '2': 0},
-    const {'1': 'HANDSHAKE', '2': 1},
-    const {'1': 'ESTABLISHED', '2': 2},
+    const {'1': 'UNKNOWN', '2': 0},
+    const {'1': 'AES256_GCM_HMAC', '2': 1},
+    const {'1': 'CHACHA20_POLY1305_HMAC', '2': 2},
   ],
 };
 
 const EncryptedMessage$json = const {
   '1': 'EncryptedMessage',
   '2': const [
-    const {'1': 'nonce', '3': 1, '4': 1, '5': 12, '10': 'nonce'},
-    const {'1': 'ciphertext', '3': 2, '4': 1, '5': 12, '10': 'ciphertext'},
+    const {'1': 'algorithm', '3': 1, '4': 1, '5': 14, '6': '.endguard.Algorithm', '10': 'algorithm'},
+    const {'1': 'nonce', '3': 2, '4': 1, '5': 12, '10': 'nonce'},
     const {'1': 'mac', '3': 3, '4': 1, '5': 12, '10': 'mac'},
+    const {'1': 'secondaryMacNonce', '3': 4, '4': 1, '5': 12, '10': 'secondaryMacNonce'},
+    const {'1': 'secondaryMac', '3': 5, '4': 1, '5': 12, '10': 'secondaryMac'},
+    const {'1': 'ciphertext', '3': 10, '4': 1, '5': 12, '10': 'ciphertext'},
   ],
 };
 
 const ConnectionOffer$json = const {
   '1': 'ConnectionOffer',
   '2': const [
-    const {'1': 'newDiffieHellmanPublicKey', '3': 10, '4': 1, '5': 12, '10': 'newDiffieHellmanPublicKey'},
+    const {'1': 'newDiffieHellmanPublicKey', '3': 1, '4': 1, '5': 12, '10': 'newDiffieHellmanPublicKey'},
   ],
 };
 
@@ -61,13 +64,24 @@ const DiffieHellmanKeyPair$json = const {
 const ConnectionState$json = const {
   '1': 'ConnectionState',
   '2': const [
-    const {'1': 'initializationState', '3': 1, '4': 1, '5': 14, '6': '.endguard.State', '10': 'initializationState'},
+    const {'1': 'initializationState', '3': 1, '4': 1, '5': 14, '6': '.endguard.ConnectionState.State', '10': 'initializationState'},
+    const {'1': 'outgoingEncryptionAlgorithm', '3': 2, '4': 1, '5': 14, '6': '.endguard.Algorithm', '10': 'outgoingEncryptionAlgorithm'},
     const {'1': 'remoteDiffieHellmanKey', '3': 8, '4': 1, '5': 12, '10': 'remoteDiffieHellmanKey'},
     const {'1': 'localDiffieHellmanKeyPairs', '3': 9, '4': 3, '5': 11, '6': '.endguard.DiffieHellmanKeyPair', '10': 'localDiffieHellmanKeyPairs'},
     const {'1': 'incomingSHA256Ratchet', '3': 12, '4': 1, '5': 12, '10': 'incomingSHA256Ratchet'},
     const {'1': 'outgoingSHA256Ratchet', '3': 13, '4': 1, '5': 12, '10': 'outgoingSHA256Ratchet'},
     const {'1': 'incomingDiffieHellmanRatchet', '3': 14, '4': 1, '5': 12, '10': 'incomingDiffieHellmanRatchet'},
     const {'1': 'outgoingDiffieHellmanRatchet', '3': 15, '4': 1, '5': 12, '10': 'outgoingDiffieHellmanRatchet'},
+  ],
+  '4': const [ConnectionState_State$json],
+};
+
+const ConnectionState_State$json = const {
+  '1': 'State',
+  '2': const [
+    const {'1': 'NOT_INITIALIZED', '2': 0},
+    const {'1': 'HANDSHAKE', '2': 1},
+    const {'1': 'ESTABLISHED', '2': 2},
   ],
 };
 

@@ -14,7 +14,7 @@ import 'package:endguard/src/state/state_accessor.dart';
 /// A secure connection, encrypted with the Endguard encryption scheme.
 class Connection {
   StateAccessor _stateAccessor;
-  Handshake _initialization;
+  Handshake _handshake;
   Encryption _encryption;
   InitialisationStateManager _connectionState;
 
@@ -27,7 +27,7 @@ class Connection {
 
   /// Creates a connection from an existing connection state.
   /// To persist the connection state, use the [getState] and save the result.
-  Connection.fromState(ConnectionState state) {
+  Connection.fromState(Uint8List state) {
     final s = StateAccessor.withState(state);
     _init(s);
   }
@@ -38,7 +38,7 @@ class Connection {
     final sha256Ratchet = SHA256Ratchet(s);
 
     _connectionState = InitialisationStateManager(s);
-    _initialization = Handshake(
+    _handshake = Handshake(
         diffieHellmanRatchet, sha256Ratchet);
     _encryption = Encryption(diffieHellmanRatchet, sha256Ratchet);
   }
@@ -54,12 +54,23 @@ class Connection {
     return _stateAccessor.exportState();
   }
 
-  /// Creates a new connection offer.
+  void setOutgoingEncryptionAlgorithm(Algorithm algorithm) {
+    _connectionState.beginOperation(Operation.UpdateConnectionSettings);
+    try {
+      _stateAccessor.outgoingEncryptionAlgorithm = algorithm;
+      _connectionState.completeOperation();
+    } catch (e) {
+      _connectionState.abortOperation();
+      rethrow;
+    }
+  }
+
+  /// Creates a new connection request.
   /// This is the first step of the handshake.
-  Future<HandshakeMessage> createConnectionOffer() async {
+  Future<HandshakeMessage> createConnectionRequest() async {
     _connectionState.beginOperation(Operation.CreateConnectionOffer);
     try {
-      final p = await _initialization.createConnectionOffer();
+      final p = await _handshake.createConnectionRequest(algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -68,16 +79,16 @@ class Connection {
     }
   }
 
-  /// Applies a connection offer from another device.
+  /// Applies a connection request from another device.
   /// Returns the connection confirmation for the other device.
   /// This completes the handshake on this device.
   /// The device is then ready to encrypt and decrypt messages.
-  Future<HandshakeMessage> applyConnectionOffer(Uint8List welcomeMessage,
+  Future<HandshakeMessage> applyConnectionRequest(Uint8List welcomeMessage,
       {SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionOffer);
     try {
-      final p = await _initialization.applyConnectionOffer(welcomeMessage,
-          remoteKey: remoteKey);
+      final p = await _handshake.applyConnectionRequest(welcomeMessage,
+          remoteKey: remoteKey, algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -93,7 +104,7 @@ class Connection {
       {SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionConfirmation);
     try {
-      final p = await _initialization.applyConnectionConfirmation(connectionConfirmation,
+      final p = await _handshake.applyConnectionConfirmation(connectionConfirmation,
           remoteKey: remoteKey);
       _connectionState.completeOperation();
       return p;
@@ -120,7 +131,7 @@ class Connection {
   Future<Uint8List> encrypt(Uint8List plaintext) async {
     _connectionState.beginOperation(Operation.EncryptMessage);
     try {
-      final p = await _encryption.encrypt(plaintext);
+      final p = await _encryption.encrypt(plaintext, algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
