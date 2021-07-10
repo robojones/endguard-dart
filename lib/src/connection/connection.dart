@@ -38,8 +38,7 @@ class Connection {
     final sha256Ratchet = SHA256Ratchet(s);
 
     _connectionState = InitialisationStateManager(s);
-    _handshake = Handshake(
-        diffieHellmanRatchet, sha256Ratchet);
+    _handshake = Handshake(diffieHellmanRatchet, sha256Ratchet);
     _encryption = Encryption(diffieHellmanRatchet, sha256Ratchet);
   }
 
@@ -70,7 +69,8 @@ class Connection {
   Future<HandshakeMessage> createConnectionRequest() async {
     _connectionState.beginOperation(Operation.CreateConnectionOffer);
     try {
-      final p = await _handshake.createConnectionRequest(algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
+      final p = await _handshake.createConnectionRequest(
+          algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -88,7 +88,8 @@ class Connection {
     _connectionState.beginOperation(Operation.ApplyConnectionOffer);
     try {
       final p = await _handshake.applyConnectionRequest(welcomeMessage,
-          remoteKey: remoteKey, algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
+          remoteKey: remoteKey,
+          algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -104,7 +105,8 @@ class Connection {
       {SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionConfirmation);
     try {
-      final p = await _handshake.applyConnectionConfirmation(connectionConfirmation,
+      final p = await _handshake.applyConnectionConfirmation(
+          connectionConfirmation,
           remoteKey: remoteKey);
       _connectionState.completeOperation();
       return p;
@@ -131,7 +133,8 @@ class Connection {
   Future<Uint8List> encrypt(Uint8List plaintext) async {
     _connectionState.beginOperation(Operation.EncryptMessage);
     try {
-      final p = await _encryption.encrypt(plaintext, algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
+      final p = await _encryption.encrypt(plaintext,
+          algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
