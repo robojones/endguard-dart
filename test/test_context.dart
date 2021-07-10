@@ -17,7 +17,6 @@ class TestContext {
 
   Future<HandshakeMessage> _connectionRequest;
   Future<HandshakeMessage> _connectionConfirmation;
-  Future<Uint8List> _message;
 
   TestContext() {
     _uninitializedConnection = Connection();
@@ -47,14 +46,6 @@ class TestContext {
           remoteKey: cr.exportKey());
       _establishedState = a.getState();
       return a;
-    }();
-
-    _message = () async {
-      final b = Connection.fromState(_handshakeState);
-      final confirmation = await _connectionConfirmation;
-      await b.applyConnectionConfirmation(confirmation.exportPackage(),
-          remoteKey: confirmation.exportKey());
-      return b.encrypt(testPlaintext);
     }();
   }
 
@@ -86,8 +77,10 @@ class TestContext {
     return utf8.encode(testPlaintextString);
   }
 
-  Future<Uint8List> get testMessage {
-    return _message;
+  Uint8List get testMessage {
+    // does not need to be in the correct format
+    // the operation should fail before attempting to parse this
+    return utf8.encode('test message');
   }
 
   Uint8List get invalidFormatCiphertext {

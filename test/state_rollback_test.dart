@@ -2,7 +2,7 @@ import 'package:endguard/endguard.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:test/test.dart';
 
-import 'util.dart';
+import 'test_context.dart';
 
 void main() {
   group('connection state rollback on error', () {
@@ -84,7 +84,7 @@ void main() {
       testExpectInvalidOperationException('decrypting a message',
           (TestContext context) async {
         final connection = await context.handshakeStateConnection;
-        final message = await context.testMessage;
+        final message = context.testMessage;
         await connection.decrypt(message);
       });
     });
