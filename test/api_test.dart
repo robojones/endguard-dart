@@ -40,6 +40,8 @@ void main() {
         expect(utf8.decode(plaintext), equals('test message'));
       } on MessageAuthenticationException {
         // This case could happen if an attacker tampers with a message
+      } on InvalidOperationError {
+        // This will only happen when the library is used wrongly
       }
     });
   });
