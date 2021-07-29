@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:endguard/src/crypto/encryption.dart';
-import 'package:endguard/src/handshake/exception.dart';
+import 'package:endguard/src/crypto/exception.dart';
 import 'package:endguard/src/handshake/message.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 
@@ -22,11 +22,10 @@ class HandshakeEncryption {
 
   /// Validates that the [key] actually equals the SHA256 hash of the [plaintext].
   static Future<void> _validatePackage(
-      Uint8List plaintext, SecretKey key) async {
+      Uint8List plaintext, { SecretKey key, EncryptedMessage encryptedMessage }) async {
     final checksum = await _hashSHA256(plaintext);
     if (checksum != key) {
-      throw InvalidHandshakePackageException(
-          'validation failed: wrong key/checksum');
+      throw MessageAuthenticationException(encryptedMessage: encryptedMessage);
     }
   }
 
@@ -47,7 +46,7 @@ class HandshakeEncryption {
     final e = EncryptedMessage.fromBuffer(package);
 
     final bytes = await MessageEncryption.decrypt(e, key);
-    await _validatePackage(bytes, key);
+    await _validatePackage(bytes, key: key, encryptedMessage: e);
     return bytes;
   }
 }

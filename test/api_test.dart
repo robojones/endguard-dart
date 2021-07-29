@@ -13,7 +13,7 @@ void main() {
       // All variables in this test MUST be typed and not initialized.
       Connection a, b;
       HandshakeMessage cr, cc;
-      Uint8List ciphertext, plaintext;
+      Uint8List ciphertext, plaintext, state;
 
       // Use the uninitialized variables from the previous section here.
       // There MUST NOT be any new variables in this section.
@@ -23,16 +23,25 @@ void main() {
       a.setOutgoingEncryptionAlgorithm(Algorithm.AES256_GCM_HMAC);
       b.setOutgoingEncryptionAlgorithm(Algorithm.CHACHA20_POLY1305_HMAC);
 
-      cr = await a.createConnectionRequest();
-      cc = await b.applyConnectionRequest(cr.exportPackage(),
-          remoteKey: cr.exportKey());
-      await a.applyConnectionConfirmation(cc.exportPackage(),
-          remoteKey: cc.exportKey());
+      try {
+        cr = await a.createConnectionRequest();
+        cc = await b.applyConnectionRequest(cr.exportPackage(),
+            remoteKey: cr.exportKey());
+        await a.applyConnectionConfirmation(cc.exportPackage(),
+            remoteKey: cc.exportKey());
 
-      ciphertext = await a.encrypt(utf8.encode('test message'));
-      plaintext = await b.decrypt(ciphertext);
+        // state export and import
+        state = a.getState();
+        a = Connection.fromState(state);
 
-      expect(utf8.decode(plaintext), equals('test message'));
+        // normal encryption and decryption
+        ciphertext = await a.encrypt(utf8.encode('test message'));
+        plaintext = await b.decrypt(ciphertext);
+        expect(utf8.decode(plaintext), equals('test message'));
+
+      } on MessageAuthenticationException {
+        // This case could happen if an attacker tampers with a message
+      }
     });
   });
 }

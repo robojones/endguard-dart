@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:endguard/src/crypto/exception.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 
 /// The AES256-GCM block cipher algorithm.
@@ -77,17 +78,23 @@ class MessageEncryption {
         encryptedMessage.ciphertext + aad,
         secretKey: secondaryMacKey);
     if (secondaryMac != wantSecondaryMac) {
-      throw SecretBoxAuthenticationError(secretBox: secretBox);
+      throw MessageAuthenticationException(encryptedMessage: encryptedMessage);
     }
 
     // decryption
     final encryptionKey = await keyDerivation.deriveKey(
         secretKey: keyMaterial, nonce: encryptedMessage.nonce);
-    final plaintext = await cipher.decrypt(
-      secretBox,
-      secretKey: encryptionKey,
-      aad: aad,
-    );
+
+    List<int> plaintext;
+    try {
+      plaintext = await cipher.decrypt(
+        secretBox,
+        secretKey: encryptionKey,
+        aad: aad,
+      );
+    } on SecretBoxAuthenticationError {
+      throw MessageAuthenticationException(encryptedMessage: encryptedMessage);
+    }
 
     return Uint8List.fromList(plaintext);
   }
