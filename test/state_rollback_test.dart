@@ -6,7 +6,7 @@ import 'test_context.dart';
 
 void main() {
   group('connection state:', () {
-    void testExpectInvalidOperationException(
+    void testExpectInvalidOperationError(
         String description, Function(TestContext) t) {
       test('should throw an InvalidOperationException when $description',
           () async {
@@ -15,7 +15,7 @@ void main() {
           await t(context);
           throw TestFailure(
               'Operation successful but expected an InvalidOperationException');
-        } on InvalidOperationException {
+        } on InvalidOperationError {
           // This is the expected behavior.
           // Make sure that the state is not changed.
           await context.assertStateIsRolledBack();
@@ -41,7 +41,7 @@ void main() {
     }
 
     group('with uninitialized connection', () {
-      testExpectInvalidOperationException('applying a ConnectionConfirmation',
+      testExpectInvalidOperationError('applying a ConnectionConfirmation',
           (TestContext context) async {
         final confirmation = await context.connectionConfirmation;
         await context.uninitializedConnection.applyConnectionConfirmation(
@@ -49,25 +49,25 @@ void main() {
             remoteKey: confirmation.exportKey());
       });
 
-      testExpectInvalidOperationException('encrypting a message',
+      testExpectInvalidOperationError('encrypting a message',
           (TestContext context) async {
         await context.uninitializedConnection.encrypt(context.testPlaintext);
       });
 
-      testExpectInvalidOperationException('decrypting a message',
+      testExpectInvalidOperationError('decrypting a message',
           (TestContext context) async {
         await context.uninitializedConnection.decrypt(context.testPlaintext);
       });
     });
 
     group('with handshake in progress', () {
-      testExpectInvalidOperationException('creating a ConnectionRequest',
+      testExpectInvalidOperationError('creating a ConnectionRequest',
           (TestContext context) async {
         final connection = await context.handshakeStateConnection;
         await connection.createConnectionRequest();
       });
 
-      testExpectInvalidOperationException('applying a ConnectionRequest',
+      testExpectInvalidOperationError('applying a ConnectionRequest',
           (TestContext context) async {
         final request = await context.connectionRequest;
         final connection = await context.handshakeStateConnection;
@@ -75,13 +75,13 @@ void main() {
             remoteKey: request.exportKey());
       });
 
-      testExpectInvalidOperationException('encrypting a message',
+      testExpectInvalidOperationError('encrypting a message',
           (TestContext context) async {
         final connection = await context.handshakeStateConnection;
         await connection.encrypt(context.testPlaintext);
       });
 
-      testExpectInvalidOperationException('decrypting a message',
+      testExpectInvalidOperationError('decrypting a message',
           (TestContext context) async {
         final connection = await context.handshakeStateConnection;
         final message = context.testMessage;
@@ -90,13 +90,13 @@ void main() {
     });
 
     group('with established connection', () {
-      testExpectInvalidOperationException('creating a ConnectionRequest',
+      testExpectInvalidOperationError('creating a ConnectionRequest',
           (TestContext context) async {
         final connection = await context.establishedConnection;
         await connection.createConnectionRequest();
       });
 
-      testExpectInvalidOperationException('applying a ConnectionRequest',
+      testExpectInvalidOperationError('applying a ConnectionRequest',
           (TestContext context) async {
         final request = await context.connectionRequest;
         final connection = await context.establishedConnection;
@@ -104,7 +104,7 @@ void main() {
             remoteKey: request.exportKey());
       });
 
-      testExpectInvalidOperationException('applying a ConnectionConfirmation',
+      testExpectInvalidOperationError('applying a ConnectionConfirmation',
           (TestContext context) async {
         final request = await context.connectionConfirmation;
         final connection = await context.establishedConnection;

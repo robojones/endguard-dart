@@ -15,7 +15,7 @@ String _operationDescription(Operation op) {
     case Operation.ApplyConnectionOffer:
       return 'apply a ConnectionOffer';
     case Operation.ApplyConnectionConfirmation:
-      return 'apply a ConnectionConfirmation package';
+      return 'apply a ConnectionConfirmation';
     case Operation.EncryptMessage:
       return 'encrypt a message';
     case Operation.DecryptMessage:
@@ -38,12 +38,10 @@ String _stateDescription(ConnectionState_State s) {
   }
 }
 
-class InvalidOperationException implements Exception {
+class InvalidOperationError extends StateError {
   final ConnectionState_State state;
   final Operation operation;
-  final String message;
 
-  InvalidOperationException(this.state, this.operation)
-      : message =
-            'can not ${_operationDescription(operation)} while the ${_stateDescription(state)} (${operation.toString()} in ${state.toString()})';
+  InvalidOperationError(this.state, this.operation)
+      : super('can not ${_operationDescription(operation)} when the ${_stateDescription(state)} (${operation.toString()} in ${state.toString()} state)');
 }

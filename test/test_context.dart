@@ -1,10 +1,10 @@
-// The TestContext provides connections in all possible states and all types of messages.
 import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:endguard/endguard.dart';
 import 'package:test/test.dart';
 
+/// The TestContext provides connections in all possible states and all types of messages.
 class TestContext {
   Connection _uninitializedConnection;
   Future<Connection> _handshakeStateConnection;

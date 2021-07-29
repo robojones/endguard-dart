@@ -65,7 +65,7 @@ class ParallelismManager {
         currentState == ConnectionState_State.ESTABLISHED) {
       _beginOperation(o);
     } else {
-      throw InvalidOperationException(currentState, o);
+      throw InvalidOperationError(currentState, o);
     }
   }
 
