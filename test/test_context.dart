@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:endguard/endguard.dart';
-import 'package:endguard/src/crypto/handshake.dart';
 import 'package:test/test.dart';
 
 class TestContext {

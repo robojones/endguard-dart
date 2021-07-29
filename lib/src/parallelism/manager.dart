@@ -1,16 +1,16 @@
 import 'dart:typed_data';
 
-import 'package:endguard/src/exception/operation_exception.dart';
+import 'package:endguard/src/parallelism/exception.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/state/state_accessor.dart';
 
-class InitialisationStateManager {
+class ParallelismManager {
   final StateAccessor _stateAccessor;
 
   Operation _activeOperation;
   Uint8List _stateSnapshot;
 
-  InitialisationStateManager(this._stateAccessor);
+  ParallelismManager(this._stateAccessor);
 
   void _beginOperation(Operation o) {
     if (_activeOperation != null) {

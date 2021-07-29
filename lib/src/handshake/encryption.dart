@@ -2,31 +2,12 @@ import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
 import 'package:endguard/src/crypto/encryption.dart';
-import 'package:endguard/src/exception/handshake_exception.dart';
+import 'package:endguard/src/handshake/exception.dart';
+import 'package:endguard/src/handshake/message.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 
 /// The hash algorithm that is used by the InitialPackageEncryption.
 final sha = Sha256();
-
-/// A ciphertext of a handshake package and the key used to encrypt it.
-class HandshakeMessage {
-  final Uint8List _ciphertext;
-  final SecretKey _key;
-
-  HandshakeMessage(Uint8List ciphertext, {SecretKey key})
-      : _ciphertext = ciphertext,
-        _key = key;
-
-  /// Returns the ciphertext of the package.
-  Uint8List exportPackage() {
-    return _ciphertext;
-  }
-
-  /// Returns the key that was used to encrypt the package.
-  SecretKey exportKey() {
-    return _key;
-  }
-}
 
 /// The encryption for the packages of the handshake.
 /// Handshake packages are encrypted using the SHA256 hash of their plaintext

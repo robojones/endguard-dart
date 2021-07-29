@@ -1,22 +1,22 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:endguard/src/connection/encryption.dart';
-import 'package:endguard/src/connection/handshake.dart';
-import 'package:endguard/src/crypto/handshake.dart';
-import 'package:endguard/src/state/initialization_state.dart';
-import 'package:endguard/src/exception/operation_exception.dart';
+import 'package:endguard/src/transmission/transmission.dart';
+import 'package:endguard/src/handshake/handshake.dart';
+import 'package:endguard/src/handshake/message.dart';
+import 'package:endguard/src/parallelism/manager.dart';
+import 'package:endguard/src/parallelism/exception.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
-import 'package:endguard/src/ratchets/diffie_hellman.dart';
-import 'package:endguard/src/ratchets/sha_256.dart';
+import 'package:endguard/src/crypto/diffie_hellman_ratchet.dart';
+import 'package:endguard/src/crypto/sha256_ratchet.dart';
 import 'package:endguard/src/state/state_accessor.dart';
 
 /// A secure connection, encrypted with the Endguard encryption scheme.
 class Connection {
   StateAccessor _stateAccessor;
   Handshake _handshake;
-  Encryption _encryption;
-  InitialisationStateManager _connectionState;
+  Transmission _encryption;
+  ParallelismManager _connectionState;
 
   /// Creates a new connection.
   /// The handshake needs to be complete before using [encrypt] or [decrypt]
@@ -37,9 +37,9 @@ class Connection {
     final diffieHellmanRatchet = DiffieHellmanRatchet(s);
     final sha256Ratchet = SHA256Ratchet(s);
 
-    _connectionState = InitialisationStateManager(s);
+    _connectionState = ParallelismManager(s);
     _handshake = Handshake(diffieHellmanRatchet, sha256Ratchet);
-    _encryption = Encryption(diffieHellmanRatchet, sha256Ratchet);
+    _encryption = Transmission(diffieHellmanRatchet, sha256Ratchet);
   }
 
   /// Returns the current state of the connection.

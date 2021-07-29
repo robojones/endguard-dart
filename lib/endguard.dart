@@ -1,5 +1,7 @@
 library cryptography;
 
 export 'src/connection/connection.dart';
-export 'src/exception/handshake_exception.dart';
-export 'src/exception/operation_exception.dart';
+export 'src/handshake/exception.dart';
+export 'src/handshake/message.dart';
+export 'src/parallelism/exception.dart';
+export 'src/protos/protocol.pb.dart';

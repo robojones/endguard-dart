@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:endguard/src/crypto/handshake.dart';
+import 'package:endguard/src/handshake/encryption.dart';
+import 'package:endguard/src/handshake/message.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
-import 'package:endguard/src/ratchets/diffie_hellman.dart';
-import 'package:endguard/src/ratchets/sha_256.dart';
+import 'package:endguard/src/crypto/diffie_hellman_ratchet.dart';
+import 'package:endguard/src/crypto/sha256_ratchet.dart';
 
 class Handshake {
   final DiffieHellmanRatchet _diffieHellmanRatchet;

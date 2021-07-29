@@ -3,14 +3,14 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:endguard/src/crypto/encryption.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
-import 'package:endguard/src/ratchets/diffie_hellman.dart';
-import 'package:endguard/src/ratchets/sha_256.dart';
+import 'package:endguard/src/crypto/diffie_hellman_ratchet.dart';
+import 'package:endguard/src/crypto/sha256_ratchet.dart';
 
-class Encryption {
+class Transmission {
   final DiffieHellmanRatchet _diffieHellmanRatchet;
   final SHA256Ratchet _sha256Ratchet;
 
-  Encryption(this._diffieHellmanRatchet, this._sha256Ratchet);
+  Transmission(this._diffieHellmanRatchet, this._sha256Ratchet);
 
   Future<SecretKeyData> _gatherEncryptionKeyMaterial() async {
     final sha256RatchetValue = _sha256Ratchet.outgoingRatchetValue;

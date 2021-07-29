@@ -8,7 +8,7 @@ void main() {
   group('connection state:', () {
     void testExpectInvalidOperationException(
         String description, Function(TestContext) t) {
-      test('should throw an InvalidOperationException when ${description}',
+      test('should throw an InvalidOperationException when $description',
           () async {
         final context = TestContext();
         try {
@@ -25,7 +25,7 @@ void main() {
 
     void testExpectInvalidProtocolBufferException(
         String description, Function(TestContext) t) {
-      test('should throw an InvalidProtocolBufferException when ${description}',
+      test('should throw an InvalidProtocolBufferException when $description',
           () async {
         final context = TestContext();
         try {
