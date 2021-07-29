@@ -1,15 +1,17 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:endguard/src/parallelism/operations.dart';
 import 'package:endguard/src/transmission/transmission.dart';
 import 'package:endguard/src/handshake/handshake.dart';
 import 'package:endguard/src/handshake/message.dart';
 import 'package:endguard/src/parallelism/manager.dart';
-import 'package:endguard/src/parallelism/exception.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/crypto/diffie_hellman_ratchet.dart';
 import 'package:endguard/src/crypto/sha256_ratchet.dart';
 import 'package:endguard/src/state/state_accessor.dart';
+
+export 'package:endguard/src/protos/protocol.pb.dart' show Algorithm;
 
 /// A secure connection, encrypted with the Endguard encryption scheme.
 class Connection {

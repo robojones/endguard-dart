@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:endguard/src/parallelism/exception.dart';
+import 'package:endguard/src/parallelism/operations.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/state/state_accessor.dart';
 
