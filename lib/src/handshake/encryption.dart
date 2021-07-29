@@ -21,8 +21,8 @@ class HandshakeEncryption {
   }
 
   /// Validates that the [key] actually equals the SHA256 hash of the [plaintext].
-  static Future<void> _validatePackage(
-      Uint8List plaintext, { SecretKey key, EncryptedMessage encryptedMessage }) async {
+  static Future<void> _validatePackage(Uint8List plaintext,
+      {SecretKey key, EncryptedMessage encryptedMessage}) async {
     final checksum = await _hashSHA256(plaintext);
     if (checksum != key) {
       throw MessageAuthenticationException(encryptedMessage: encryptedMessage);

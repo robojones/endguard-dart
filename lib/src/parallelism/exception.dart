@@ -2,7 +2,8 @@ import 'package:endguard/src/parallelism/operations.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 
 export 'package:endguard/src/parallelism/operations.dart' show Operation;
-export 'package:endguard/src/protos/protocol.pb.dart' show ConnectionState_State;
+export 'package:endguard/src/protos/protocol.pb.dart'
+    show ConnectionState_State;
 
 String _operationDescription(Operation op) {
   switch (op) {
@@ -43,5 +44,6 @@ class InvalidOperationError extends StateError {
   final Operation operation;
 
   InvalidOperationError(this.state, this.operation)
-      : super('can not ${_operationDescription(operation)} when the ${_stateDescription(state)} (${operation.toString()} in ${state.toString()} state)');
+      : super(
+            'can not ${_operationDescription(operation)} when the ${_stateDescription(state)} (${operation.toString()} in ${state.toString()} state)');
 }
