@@ -6,5 +6,5 @@ class MessageAuthenticationException implements Exception {
 
   MessageAuthenticationException({this.encryptedMessage})
       : message =
-            'EncryptedMessage has wrong message authentication code (MAC)';
+            'EncryptedMessage has failed the authentication check';
 }
