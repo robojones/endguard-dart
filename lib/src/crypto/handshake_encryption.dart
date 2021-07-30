@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:endguard/src/crypto/encryption.dart';
+import 'package:endguard/src/crypto/message_encryption.dart';
 import 'package:endguard/src/crypto/exception.dart';
 import 'package:endguard/src/handshake/message.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
