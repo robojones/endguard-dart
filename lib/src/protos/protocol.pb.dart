@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: protocol.proto
 //
-// @dart = 2.3
+// @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -25,7 +25,35 @@ class EncryptedMessage extends $pb.GeneratedMessage {
   ;
 
   EncryptedMessage._() : super();
-  factory EncryptedMessage() => create();
+  factory EncryptedMessage({
+    Algorithm? algorithm,
+    $core.List<$core.int>? nonce,
+    $core.List<$core.int>? mac,
+    $core.List<$core.int>? secondaryMacNonce,
+    $core.List<$core.int>? secondaryMac,
+    $core.List<$core.int>? ciphertext,
+  }) {
+    final _result = create();
+    if (algorithm != null) {
+      _result.algorithm = algorithm;
+    }
+    if (nonce != null) {
+      _result.nonce = nonce;
+    }
+    if (mac != null) {
+      _result.mac = mac;
+    }
+    if (secondaryMacNonce != null) {
+      _result.secondaryMacNonce = secondaryMacNonce;
+    }
+    if (secondaryMac != null) {
+      _result.secondaryMac = secondaryMac;
+    }
+    if (ciphertext != null) {
+      _result.ciphertext = ciphertext;
+    }
+    return _result;
+  }
   factory EncryptedMessage.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory EncryptedMessage.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -37,7 +65,7 @@ class EncryptedMessage extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  EncryptedMessage copyWith(void Function(EncryptedMessage) updates) => super.copyWith((message) => updates(message as EncryptedMessage)); // ignore: deprecated_member_use
+  EncryptedMessage copyWith(void Function(EncryptedMessage) updates) => super.copyWith((message) => updates(message as EncryptedMessage)) as EncryptedMessage; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static EncryptedMessage create() => EncryptedMessage._();
@@ -45,7 +73,7 @@ class EncryptedMessage extends $pb.GeneratedMessage {
   static $pb.PbList<EncryptedMessage> createRepeated() => $pb.PbList<EncryptedMessage>();
   @$core.pragma('dart2js:noInline')
   static EncryptedMessage getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<EncryptedMessage>(create);
-  static EncryptedMessage _defaultInstance;
+  static EncryptedMessage? _defaultInstance;
 
   @$pb.TagNumber(1)
   Algorithm get algorithm => $_getN(0);
@@ -109,7 +137,15 @@ class ConnectionOffer extends $pb.GeneratedMessage {
   ;
 
   ConnectionOffer._() : super();
-  factory ConnectionOffer() => create();
+  factory ConnectionOffer({
+    $core.List<$core.int>? newDiffieHellmanPublicKey,
+  }) {
+    final _result = create();
+    if (newDiffieHellmanPublicKey != null) {
+      _result.newDiffieHellmanPublicKey = newDiffieHellmanPublicKey;
+    }
+    return _result;
+  }
   factory ConnectionOffer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory ConnectionOffer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -121,7 +157,7 @@ class ConnectionOffer extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ConnectionOffer copyWith(void Function(ConnectionOffer) updates) => super.copyWith((message) => updates(message as ConnectionOffer)); // ignore: deprecated_member_use
+  ConnectionOffer copyWith(void Function(ConnectionOffer) updates) => super.copyWith((message) => updates(message as ConnectionOffer)) as ConnectionOffer; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ConnectionOffer create() => ConnectionOffer._();
@@ -129,7 +165,7 @@ class ConnectionOffer extends $pb.GeneratedMessage {
   static $pb.PbList<ConnectionOffer> createRepeated() => $pb.PbList<ConnectionOffer>();
   @$core.pragma('dart2js:noInline')
   static ConnectionOffer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionOffer>(create);
-  static ConnectionOffer _defaultInstance;
+  static ConnectionOffer? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get newDiffieHellmanPublicKey => $_getN(0);
@@ -152,7 +188,31 @@ class ConnectionConfirmation extends $pb.GeneratedMessage {
   ;
 
   ConnectionConfirmation._() : super();
-  factory ConnectionConfirmation() => create();
+  factory ConnectionConfirmation({
+    $core.List<$core.int>? connectionOfferDiffieHellmanPublicKey,
+    $core.List<$core.int>? outgoingSHA256RatchetInitValue,
+    $core.List<$core.int>? incomingSHA256RatchetInitValue,
+    $core.List<$core.int>? outgoingNewDiffieHellmanPublicKey,
+    $core.List<$core.int>? incomingNewDiffieHellmanPublicKey,
+  }) {
+    final _result = create();
+    if (connectionOfferDiffieHellmanPublicKey != null) {
+      _result.connectionOfferDiffieHellmanPublicKey = connectionOfferDiffieHellmanPublicKey;
+    }
+    if (outgoingSHA256RatchetInitValue != null) {
+      _result.outgoingSHA256RatchetInitValue = outgoingSHA256RatchetInitValue;
+    }
+    if (incomingSHA256RatchetInitValue != null) {
+      _result.incomingSHA256RatchetInitValue = incomingSHA256RatchetInitValue;
+    }
+    if (outgoingNewDiffieHellmanPublicKey != null) {
+      _result.outgoingNewDiffieHellmanPublicKey = outgoingNewDiffieHellmanPublicKey;
+    }
+    if (incomingNewDiffieHellmanPublicKey != null) {
+      _result.incomingNewDiffieHellmanPublicKey = incomingNewDiffieHellmanPublicKey;
+    }
+    return _result;
+  }
   factory ConnectionConfirmation.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory ConnectionConfirmation.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -164,7 +224,7 @@ class ConnectionConfirmation extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ConnectionConfirmation copyWith(void Function(ConnectionConfirmation) updates) => super.copyWith((message) => updates(message as ConnectionConfirmation)); // ignore: deprecated_member_use
+  ConnectionConfirmation copyWith(void Function(ConnectionConfirmation) updates) => super.copyWith((message) => updates(message as ConnectionConfirmation)) as ConnectionConfirmation; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ConnectionConfirmation create() => ConnectionConfirmation._();
@@ -172,7 +232,7 @@ class ConnectionConfirmation extends $pb.GeneratedMessage {
   static $pb.PbList<ConnectionConfirmation> createRepeated() => $pb.PbList<ConnectionConfirmation>();
   @$core.pragma('dart2js:noInline')
   static ConnectionConfirmation getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionConfirmation>(create);
-  static ConnectionConfirmation _defaultInstance;
+  static ConnectionConfirmation? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get connectionOfferDiffieHellmanPublicKey => $_getN(0);
@@ -229,7 +289,23 @@ class Envelope extends $pb.GeneratedMessage {
   ;
 
   Envelope._() : super();
-  factory Envelope() => create();
+  factory Envelope({
+    $core.List<$core.int>? recipientDiffieHellmanPublicKey,
+    $core.List<$core.int>? senderNewDiffieHellmanPublicKey,
+    $core.List<$core.int>? payload,
+  }) {
+    final _result = create();
+    if (recipientDiffieHellmanPublicKey != null) {
+      _result.recipientDiffieHellmanPublicKey = recipientDiffieHellmanPublicKey;
+    }
+    if (senderNewDiffieHellmanPublicKey != null) {
+      _result.senderNewDiffieHellmanPublicKey = senderNewDiffieHellmanPublicKey;
+    }
+    if (payload != null) {
+      _result.payload = payload;
+    }
+    return _result;
+  }
   factory Envelope.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory Envelope.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -241,7 +317,7 @@ class Envelope extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  Envelope copyWith(void Function(Envelope) updates) => super.copyWith((message) => updates(message as Envelope)); // ignore: deprecated_member_use
+  Envelope copyWith(void Function(Envelope) updates) => super.copyWith((message) => updates(message as Envelope)) as Envelope; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static Envelope create() => Envelope._();
@@ -249,7 +325,7 @@ class Envelope extends $pb.GeneratedMessage {
   static $pb.PbList<Envelope> createRepeated() => $pb.PbList<Envelope>();
   @$core.pragma('dart2js:noInline')
   static Envelope getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Envelope>(create);
-  static Envelope _defaultInstance;
+  static Envelope? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get recipientDiffieHellmanPublicKey => $_getN(0);
@@ -287,7 +363,19 @@ class DiffieHellmanKeyPair extends $pb.GeneratedMessage {
   ;
 
   DiffieHellmanKeyPair._() : super();
-  factory DiffieHellmanKeyPair() => create();
+  factory DiffieHellmanKeyPair({
+    $core.List<$core.int>? diffieHellmanPublicKey,
+    $core.List<$core.int>? diffieHellmanPrivateKey,
+  }) {
+    final _result = create();
+    if (diffieHellmanPublicKey != null) {
+      _result.diffieHellmanPublicKey = diffieHellmanPublicKey;
+    }
+    if (diffieHellmanPrivateKey != null) {
+      _result.diffieHellmanPrivateKey = diffieHellmanPrivateKey;
+    }
+    return _result;
+  }
   factory DiffieHellmanKeyPair.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory DiffieHellmanKeyPair.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -299,7 +387,7 @@ class DiffieHellmanKeyPair extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  DiffieHellmanKeyPair copyWith(void Function(DiffieHellmanKeyPair) updates) => super.copyWith((message) => updates(message as DiffieHellmanKeyPair)); // ignore: deprecated_member_use
+  DiffieHellmanKeyPair copyWith(void Function(DiffieHellmanKeyPair) updates) => super.copyWith((message) => updates(message as DiffieHellmanKeyPair)) as DiffieHellmanKeyPair; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static DiffieHellmanKeyPair create() => DiffieHellmanKeyPair._();
@@ -307,7 +395,7 @@ class DiffieHellmanKeyPair extends $pb.GeneratedMessage {
   static $pb.PbList<DiffieHellmanKeyPair> createRepeated() => $pb.PbList<DiffieHellmanKeyPair>();
   @$core.pragma('dart2js:noInline')
   static DiffieHellmanKeyPair getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DiffieHellmanKeyPair>(create);
-  static DiffieHellmanKeyPair _defaultInstance;
+  static DiffieHellmanKeyPair? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get diffieHellmanPublicKey => $_getN(0);
@@ -342,7 +430,43 @@ class ConnectionState extends $pb.GeneratedMessage {
   ;
 
   ConnectionState._() : super();
-  factory ConnectionState() => create();
+  factory ConnectionState({
+    ConnectionState_State? initializationState,
+    Algorithm? outgoingEncryptionAlgorithm,
+    $core.List<$core.int>? remoteDiffieHellmanKey,
+    $core.Iterable<DiffieHellmanKeyPair>? localDiffieHellmanKeyPairs,
+    $core.List<$core.int>? incomingSHA256Ratchet,
+    $core.List<$core.int>? outgoingSHA256Ratchet,
+    $core.List<$core.int>? incomingDiffieHellmanRatchet,
+    $core.List<$core.int>? outgoingDiffieHellmanRatchet,
+  }) {
+    final _result = create();
+    if (initializationState != null) {
+      _result.initializationState = initializationState;
+    }
+    if (outgoingEncryptionAlgorithm != null) {
+      _result.outgoingEncryptionAlgorithm = outgoingEncryptionAlgorithm;
+    }
+    if (remoteDiffieHellmanKey != null) {
+      _result.remoteDiffieHellmanKey = remoteDiffieHellmanKey;
+    }
+    if (localDiffieHellmanKeyPairs != null) {
+      _result.localDiffieHellmanKeyPairs.addAll(localDiffieHellmanKeyPairs);
+    }
+    if (incomingSHA256Ratchet != null) {
+      _result.incomingSHA256Ratchet = incomingSHA256Ratchet;
+    }
+    if (outgoingSHA256Ratchet != null) {
+      _result.outgoingSHA256Ratchet = outgoingSHA256Ratchet;
+    }
+    if (incomingDiffieHellmanRatchet != null) {
+      _result.incomingDiffieHellmanRatchet = incomingDiffieHellmanRatchet;
+    }
+    if (outgoingDiffieHellmanRatchet != null) {
+      _result.outgoingDiffieHellmanRatchet = outgoingDiffieHellmanRatchet;
+    }
+    return _result;
+  }
   factory ConnectionState.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
   factory ConnectionState.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
@@ -354,7 +478,7 @@ class ConnectionState extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  ConnectionState copyWith(void Function(ConnectionState) updates) => super.copyWith((message) => updates(message as ConnectionState)); // ignore: deprecated_member_use
+  ConnectionState copyWith(void Function(ConnectionState) updates) => super.copyWith((message) => updates(message as ConnectionState)) as ConnectionState; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
   static ConnectionState create() => ConnectionState._();
@@ -362,7 +486,7 @@ class ConnectionState extends $pb.GeneratedMessage {
   static $pb.PbList<ConnectionState> createRepeated() => $pb.PbList<ConnectionState>();
   @$core.pragma('dart2js:noInline')
   static ConnectionState getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionState>(create);
-  static ConnectionState _defaultInstance;
+  static ConnectionState? _defaultInstance;
 
   @$pb.TagNumber(1)
   ConnectionState_State get initializationState => $_getN(0);
