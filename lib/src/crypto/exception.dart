@@ -4,7 +4,7 @@ class MessageAuthenticationException implements Exception {
   EncryptedMessage encryptedMessage;
   final String message;
 
-  MessageAuthenticationException({this.encryptedMessage})
+  MessageAuthenticationException({required this.encryptedMessage})
       : message =
             'EncryptedMessage has failed the authentication check';
 }

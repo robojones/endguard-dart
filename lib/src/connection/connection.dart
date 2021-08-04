@@ -15,10 +15,10 @@ export 'package:endguard/src/protos/protocol.pb.dart' show Algorithm;
 
 /// A secure connection, encrypted with the Endguard encryption scheme.
 class Connection {
-  StateAccessor _stateAccessor;
-  Handshake _handshake;
-  Transmission _encryption;
-  ParallelismManager _connectionState;
+  late final StateAccessor _stateAccessor;
+  late final Handshake _handshake;
+  late final Transmission _encryption;
+  late final ParallelismManager _connectionState;
 
   /// Creates a new connection.
   /// The handshake needs to be complete before using [encrypt] or [decrypt]
@@ -86,7 +86,7 @@ class Connection {
   /// This completes the handshake on this device.
   /// The device is then ready to encrypt and decrypt messages.
   Future<HandshakeMessage> applyConnectionRequest(Uint8List welcomeMessage,
-      {SecretKey remoteKey}) async {
+      {required SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionOffer);
     try {
       final p = await _handshake.applyConnectionRequest(welcomeMessage,
@@ -104,7 +104,7 @@ class Connection {
   /// This completes the handshake for this device.
   /// The device is then ready to encrypt and decrypt messages.
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
-      {SecretKey remoteKey}) async {
+      {required SecretKey remoteKey}) async {
     _connectionState.beginOperation(Operation.ApplyConnectionConfirmation);
     try {
       final p = await _handshake.applyConnectionConfirmation(

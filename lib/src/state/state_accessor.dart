@@ -27,7 +27,7 @@ class StateAccessor {
   }
 
   Future<DiffieHellmanKeyPair> _convertToDiffieHellmanKeyPair(
-      SimpleKeyPairData d) async {
+      SimpleKeyPair d) async {
     final p = DiffieHellmanKeyPair();
     final pk = await d.extractPublicKey();
     p.diffieHellmanPublicKey = pk.bytes;
@@ -40,8 +40,7 @@ class StateAccessor {
   }
 
   Algorithm get outgoingEncryptionAlgorithm {
-    if (_state.outgoingEncryptionAlgorithm == Algorithm.UNKNOWN ||
-        _state.outgoingEncryptionAlgorithm == null) {
+    if (_state.outgoingEncryptionAlgorithm == Algorithm.UNKNOWN) {
       return Algorithm.CHACHA20_POLY1305_HMAC;
     }
     return _state.outgoingEncryptionAlgorithm;
@@ -90,10 +89,11 @@ class StateAccessor {
       return _convertToSimpleKeyPair(
           _state.localDiffieHellmanKeyPairs.last, KeyPairType.x25519);
     }
-    return null;
+    throw StateError(
+        'must not access latestLocalDiffieHellmanKeyPair when connection is not initialized');
   }
 
-  Future<SimpleKeyPairData> findLocalDiffieHellmanKeyPairByPublicKey(
+  Future<SimpleKeyPairData?> findLocalDiffieHellmanKeyPairByPublicKey(
       SimplePublicKey localPublicKey) async {
     for (final pair in _state.localDiffieHellmanKeyPairs) {
       if (SimplePublicKey(pair.diffieHellmanPublicKey,

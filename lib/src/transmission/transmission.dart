@@ -46,10 +46,10 @@ class Transmission {
     await _diffieHellmanRatchet.advanceIncomingDiffieHellmanRatchet(localPk);
     await _sha256Ratchet.advanceIncomingRatchet(envelopeBytes);
 
-    return envelope.payload;
+    return Uint8List.fromList(envelope.payload);
   }
 
-  Future<Uint8List> encrypt(Uint8List plaintext, {Algorithm algorithm}) async {
+  Future<Uint8List> encrypt(Uint8List plaintext, {required Algorithm algorithm}) async {
     // create envelope
     final localKeyPair =
         await _diffieHellmanRatchet.generateAndAddLocalDiffieHellmanKeyPair();

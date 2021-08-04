@@ -35,7 +35,7 @@ void main() {
         a = Connection.fromState(state);
 
         // normal encryption and decryption
-        ciphertext = await a.encrypt(utf8.encode('test message'));
+        ciphertext = await a.encrypt(Uint8List.fromList(utf8.encode('test message')));
         plaintext = await b.decrypt(ciphertext);
         expect(utf8.decode(plaintext), equals('test message'));
       } on MessageAuthenticationException {

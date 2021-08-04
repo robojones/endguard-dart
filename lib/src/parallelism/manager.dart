@@ -5,13 +5,15 @@ import 'package:endguard/src/parallelism/operations.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/state/state_accessor.dart';
 
+final _emptyList = Uint8List(0);
+
 class ParallelismManager {
   final StateAccessor _stateAccessor;
 
-  Operation _activeOperation;
+  Operation? _activeOperation;
   Uint8List _stateSnapshot;
 
-  ParallelismManager(this._stateAccessor);
+  ParallelismManager(this._stateAccessor): _stateSnapshot = _emptyList;
 
   void _beginOperation(Operation o) {
     if (_activeOperation != null) {
@@ -22,7 +24,7 @@ class ParallelismManager {
     _stateSnapshot = _stateAccessor.exportState();
   }
 
-  void _completeOperation({bool restoreState}) {
+  void _completeOperation({bool restoreState = false}) {
     if (_activeOperation == null) {
       throw StateError('can not complete operation: no operation active');
     }
@@ -31,7 +33,7 @@ class ParallelismManager {
     if (restoreState) {
       _stateAccessor.importState(_stateSnapshot);
     }
-    _stateSnapshot = null;
+    _stateSnapshot = _emptyList;
   }
 
   /// isIdle is true while there is no active operation.

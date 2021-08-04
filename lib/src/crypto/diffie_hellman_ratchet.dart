@@ -20,7 +20,7 @@ class DiffieHellmanRatchet {
     return _stateAccessor.addLocalDiffieHellmanKeyPair(pair);
   }
 
-  Future<SimpleKeyPairData> generateAndAddLocalDiffieHellmanKeyPair() async {
+  Future<SimpleKeyPair> generateAndAddLocalDiffieHellmanKeyPair() async {
     final p = await dh.newKeyPair();
     await _stateAccessor.addLocalDiffieHellmanKeyPair(p);
     return p;
@@ -31,10 +31,11 @@ class DiffieHellmanRatchet {
   /// Expects a matching key pair for localPublicKey in localDiffieHellmanKeys.
   /// Removes all key pairs which are older than the one with the localPublicKey
   Future<void> advanceIncomingDiffieHellmanRatchet(
-      PublicKey localPublicKey) async {
+      SimplePublicKey localPublicKey) async {
     // Find matching private key for localPublicKey.
     final localPair = await _stateAccessor
         .findLocalDiffieHellmanKeyPairByPublicKey(localPublicKey);
+
     if (localPair == null) {
       throw Exception('public key not found'); // TODO
     }
@@ -49,7 +50,7 @@ class DiffieHellmanRatchet {
         await dh.sharedSecretKey(keyPair: localPair, remotePublicKey: remotePk);
 
     // update ratchet value
-    _stateAccessor.incomingDiffieHellmanRatchet = secret;
+    _stateAccessor.incomingDiffieHellmanRatchet = await secret.extract();
   }
 
   /// Advance the outgoing ratchet with the newly generated newKeyPair.
@@ -63,7 +64,7 @@ class DiffieHellmanRatchet {
         await dh.sharedSecretKey(keyPair: localPair, remotePublicKey: remotePk);
 
     // update ratchet value
-    _stateAccessor.outgoingDiffieHellmanRatchet = secret;
+    _stateAccessor.outgoingDiffieHellmanRatchet = await secret.extract();
   }
 
   SecretKeyData get incomingRatchetValue {

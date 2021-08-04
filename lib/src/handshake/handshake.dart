@@ -14,7 +14,7 @@ class Handshake {
   Handshake(this._diffieHellmanRatchet, this._sha256Ratchet);
 
   Future<HandshakeMessage> createConnectionRequest(
-      {Algorithm algorithm}) async {
+      {required Algorithm algorithm}) async {
     final k =
         await _diffieHellmanRatchet.generateAndAddLocalDiffieHellmanKeyPair();
 
@@ -28,7 +28,7 @@ class Handshake {
   }
 
   Future<HandshakeMessage> applyConnectionRequest(Uint8List connectionRequest,
-      {SecretKey remoteKey, Algorithm algorithm}) async {
+      {required SecretKey remoteKey, required Algorithm algorithm}) async {
     final bytes = await HandshakeEncryption.decryptMessage(connectionRequest,
         key: remoteKey);
     final p = ConnectionOffer.fromBuffer(bytes);
@@ -69,7 +69,7 @@ class Handshake {
   }
 
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
-      {SecretKey remoteKey}) async {
+      {required SecretKey remoteKey}) async {
     final bytes = await HandshakeEncryption.decryptMessage(
         connectionConfirmation,
         key: remoteKey);

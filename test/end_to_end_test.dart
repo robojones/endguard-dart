@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:endguard/endguard.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
@@ -105,11 +106,11 @@ void main() {
                 remoteKey: connectionConfirmation.exportKey());
 
             Future<void> testSendMessage({
-              Connection sender,
-              Connection recipient,
-              String message,
+              required Connection sender,
+              required Connection recipient,
+              required String message,
             }) async {
-              final m = utf8.encode(message);
+              final m = Uint8List.fromList(utf8.encode(message));
               final encrypted = await sender.encrypt(m);
               final result = await recipient.decrypt(encrypted);
 

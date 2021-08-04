@@ -7,7 +7,7 @@ class HandshakeMessage {
   final Uint8List _ciphertext;
   final SecretKey _key;
 
-  HandshakeMessage(Uint8List ciphertext, {SecretKey key})
+  HandshakeMessage(Uint8List ciphertext, {required SecretKey key})
       : _ciphertext = ciphertext,
         _key = key;
 

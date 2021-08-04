@@ -6,16 +6,16 @@ import 'package:test/test.dart';
 
 /// The TestContext provides connections in all possible states and all types of messages.
 class TestContext {
-  Connection _uninitializedConnection;
-  Future<Connection> _handshakeStateConnection;
-  Future<Connection> _establishedConnection;
+  late final Connection _uninitializedConnection;
+  late final Future<Connection> _handshakeStateConnection;
+  late final Future<Connection> _establishedConnection;
 
-  Uint8List _uninitializedState;
-  Uint8List _handshakeState;
-  Uint8List _establishedState;
+  late final Uint8List _uninitializedState;
+  late final Uint8List _handshakeState;
+  late final Uint8List _establishedState;
 
-  Future<HandshakeMessage> _connectionRequest;
-  Future<HandshakeMessage> _connectionConfirmation;
+  late final Future<HandshakeMessage> _connectionRequest;
+  late final Future<HandshakeMessage> _connectionConfirmation;
 
   TestContext() {
     _uninitializedConnection = Connection();
@@ -73,19 +73,19 @@ class TestContext {
   }
 
   Uint8List get testPlaintext {
-    return utf8.encode(testPlaintextString);
+    return Uint8List.fromList(utf8.encode(testPlaintextString));
   }
 
   Uint8List get testMessage {
     // does not need to be in the correct format
     // the operation should fail before attempting to parse this
-    return utf8.encode('test message');
+    return Uint8List.fromList(utf8.encode('test message'));
   }
 
   Uint8List get invalidFormatCiphertext {
     // Does not need to be a valid ciphertext as the test should fail
     // before trying to decrypt the ciphertext.
-    return utf8.encode('test ciphertext');
+    return Uint8List.fromList(utf8.encode('test ciphertext'));
   }
 
   Future<void> assertStateIsRolledBack() async {
