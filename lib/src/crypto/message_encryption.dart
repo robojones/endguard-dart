@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:endguard/src/crypto/exception.dart';
 import 'package:endguard/src/protos/protocol.pb.dart';
+import 'package:protobuf/protobuf.dart';
 
 /// The AES256-GCM block cipher algorithm.
 final aes = AesGcm.with256bits();
@@ -55,27 +56,34 @@ class MessageEncryption {
   /// Decrypts an AES256-GCM [encryptedMessage] using the [key]
   /// and authenticates the additional authenticated data [aad]
   static Future<Uint8List> decrypt(
-      EncryptedMessage encryptedMessage, SecretKey key,
+      Uint8List encryptedMessage, SecretKey key,
       {Uint8List? aad}) async {
     aad ??= Uint8List(0);
 
+    late final EncryptedMessage encrypted;
+    try {
+      encrypted = EncryptedMessage.fromBuffer(encryptedMessage);
+    } on InvalidProtocolBufferException {
+      throw MessageAuthenticationException(encryptedMessage: encryptedMessage);
+    }
+
     // select algorithms
-    final algorithm = encryptedMessage.algorithm;
+    final algorithm = encrypted.algorithm;
     final cipher = _getCipherAlgorithm(algorithm);
     final keyDerivation = _getKeyDerivationAlgorithm(algorithm);
     final macAlgorithm = _getMacAlgorithm(algorithm);
 
     // create secret box
-    final mac = Mac(encryptedMessage.mac);
-    final secondaryMac = Mac(encryptedMessage.secondaryMac);
-    final secretBox = SecretBox(encryptedMessage.ciphertext,
-        nonce: encryptedMessage.nonce, mac: mac);
+    final mac = Mac(encrypted.mac);
+    final secondaryMac = Mac(encrypted.secondaryMac);
+    final secretBox = SecretBox(encrypted.ciphertext,
+        nonce: encrypted.nonce, mac: mac);
 
     // validate secondary mac
     final secondaryMacKey = await keyDerivation.deriveKey(
-        secretKey: key, nonce: encryptedMessage.secondaryMacNonce);
+        secretKey: key, nonce: encrypted.secondaryMacNonce);
     final wantSecondaryMac = await macAlgorithm.calculateMac(
-        encryptedMessage.ciphertext + aad,
+        encrypted.ciphertext + aad,
         secretKey: secondaryMacKey);
     if (secondaryMac != wantSecondaryMac) {
       throw MessageAuthenticationException(encryptedMessage: encryptedMessage);
@@ -83,7 +91,7 @@ class MessageEncryption {
 
     // decryption
     final encryptionKey = await keyDerivation.deriveKey(
-        secretKey: key, nonce: encryptedMessage.nonce);
+        secretKey: key, nonce: encrypted.nonce);
 
     List<int> plaintext;
     try {

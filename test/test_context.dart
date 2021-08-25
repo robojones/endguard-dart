@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:cryptography/cryptography.dart';
 import 'package:endguard/endguard.dart';
 import 'package:test/test.dart';
 
@@ -86,6 +87,12 @@ class TestContext {
     // Does not need to be a valid ciphertext as the test should fail
     // before trying to decrypt the ciphertext.
     return Uint8List.fromList(utf8.encode('test ciphertext'));
+  }
+
+  SecretKey get invalidKey {
+    // Does not need to be a valid ciphertext as the test should fail
+    // before trying to decrypt the ciphertext.
+    return SecretKey(utf8.encode('test key'));
   }
 
   Future<void> assertStateIsRolledBack() async {

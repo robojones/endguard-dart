@@ -22,31 +22,31 @@ class HandshakeEncryption {
 
   /// Validates that the [key] actually equals the SHA256 hash of the [plaintext].
   static Future<void> _validatePackage(Uint8List plaintext,
-      {required SecretKey key, required EncryptedMessage encryptedMessage}) async {
+      {required SecretKey key,
+      required Uint8List encryptedMessage}) async {
     final checksum = await _hashSHA256(plaintext);
     if (checksum != key) {
       throw MessageAuthenticationException(encryptedMessage: encryptedMessage);
     }
   }
 
-  /// Encrypts a [package] using its SHA256 hash as key.
-  static Future<HandshakeMessage> encryptMessage(Uint8List package,
+  /// Encrypts a [message] using its SHA256 hash as key.
+  static Future<HandshakeMessage> encryptMessage(Uint8List message,
       {required Algorithm algorithm}) async {
-    final key = await _hashSHA256(package);
+    final key = await _hashSHA256(message);
     final e =
-        await MessageEncryption.encrypt(package, key, algorithm: algorithm);
+        await MessageEncryption.encrypt(message, key, algorithm: algorithm);
     final bytes = e.writeToBuffer();
 
     return HandshakeMessage(bytes, key: key);
   }
 
-  /// Decrypts an encrypted [package] using the [key].
-  static Future<Uint8List> decryptMessage(Uint8List package,
+  /// Decrypts an encrypted [message] using the [key].
+  static Future<Uint8List> decryptMessage(Uint8List message,
       {required SecretKey key}) async {
-    final e = EncryptedMessage.fromBuffer(package);
 
-    final bytes = await MessageEncryption.decrypt(e, key);
-    await _validatePackage(bytes, key: key, encryptedMessage: e);
+    final bytes = await MessageEncryption.decrypt(message, key);
+    await _validatePackage(bytes, key: key, encryptedMessage: message);
     return bytes;
   }
 }

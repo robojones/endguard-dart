@@ -1,5 +1,4 @@
 import 'package:endguard/endguard.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:test/test.dart';
 
 import 'test_context.dart';
@@ -23,7 +22,7 @@ void main() {
       });
     }
 
-    void testExpectInvalidProtocolBufferException(
+    void testExpectMessageAuthenticationException(
         String description, Function(TestContext) t) {
       test('should throw an InvalidProtocolBufferException when $description',
           () async {
@@ -32,7 +31,7 @@ void main() {
           await t(context);
           throw TestFailure(
               'Operation successful but expected an InvalidProtocolBufferException');
-        } on InvalidProtocolBufferException {
+        } on MessageAuthenticationException {
           // This is the expected behavior.
           // Make sure that the state is not changed.
           await context.assertStateIsRolledBack();
@@ -57,6 +56,12 @@ void main() {
       testExpectInvalidOperationError('decrypting a message',
           (TestContext context) async {
         await context.uninitializedConnection.decrypt(context.testPlaintext);
+      });
+
+      testExpectMessageAuthenticationException(
+      'applying a ConnectionRequest with wrong format',
+          (TestContext context) async {
+        await context.uninitializedConnection.applyConnectionRequest(context.invalidFormatCiphertext, remoteKey: context.invalidKey);
       });
     });
 
@@ -87,6 +92,13 @@ void main() {
         final message = context.testMessage;
         await connection.decrypt(message);
       });
+
+      testExpectMessageAuthenticationException(
+          'applying a ConnectionConfirmation with wrong format',
+          (TestContext context) async {
+        final connection = await context.handshakeStateConnection;
+        await connection.applyConnectionConfirmation(context.invalidFormatCiphertext, remoteKey: context.invalidKey);
+      });
     });
 
     group('with established connection', () {
@@ -112,7 +124,7 @@ void main() {
             remoteKey: request.exportKey());
       });
 
-      testExpectInvalidProtocolBufferException(
+      testExpectMessageAuthenticationException(
           'decrypting a message with wrong format',
           (TestContext context) async {
         final connection = await context.establishedConnection;
