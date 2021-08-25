@@ -7,19 +7,19 @@ export 'package:endguard/src/protos/protocol.pb.dart'
 
 String _operationDescription(Operation op) {
   switch (op) {
-    case Operation.ExportState:
+    case Operation.exportState:
       return 'export the connection state';
-    case Operation.UpdateConnectionSettings:
+    case Operation.updateConnectionSettings:
       return 'update the settings for the connection';
-    case Operation.CreateConnectionOffer:
+    case Operation.createConnectionOffer:
       return 'create a new ConnectionOffer';
-    case Operation.ApplyConnectionOffer:
+    case Operation.applyConnectionOffer:
       return 'apply a ConnectionOffer';
-    case Operation.ApplyConnectionConfirmation:
+    case Operation.applyConnectionConfirmation:
       return 'apply a ConnectionConfirmation';
-    case Operation.EncryptMessage:
+    case Operation.encryptMessage:
       return 'encrypt a message';
-    case Operation.DecryptMessage:
+    case Operation.decryptMessage:
       return 'decrypt a message';
     default:
       return '<unknown operation>';

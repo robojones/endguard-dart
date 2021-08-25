@@ -48,7 +48,7 @@ class Connection {
   /// The state should be persisted after every method call as all of them
   /// modify the state.
   Uint8List getState() {
-    _connectionState.beginOperation(Operation.ExportState);
+    _connectionState.beginOperation(Operation.exportState);
     // Operation can be completed directly, as is it does not modify the state.
     // Therefore, no rollback is needed, even if there is an error.
     _connectionState.completeOperation();
@@ -56,7 +56,7 @@ class Connection {
   }
 
   void setOutgoingEncryptionAlgorithm(Algorithm algorithm) {
-    _connectionState.beginOperation(Operation.UpdateConnectionSettings);
+    _connectionState.beginOperation(Operation.updateConnectionSettings);
     try {
       _stateAccessor.outgoingEncryptionAlgorithm = algorithm;
       _connectionState.completeOperation();
@@ -69,7 +69,7 @@ class Connection {
   /// Creates a new connection request.
   /// This is the first step of the handshake.
   Future<HandshakeMessage> createConnectionRequest() async {
-    _connectionState.beginOperation(Operation.CreateConnectionOffer);
+    _connectionState.beginOperation(Operation.createConnectionOffer);
     try {
       final p = await _handshake.createConnectionRequest(
           algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
@@ -87,7 +87,7 @@ class Connection {
   /// The device is then ready to encrypt and decrypt messages.
   Future<HandshakeMessage> applyConnectionRequest(Uint8List welcomeMessage,
       {required SecretKey remoteKey}) async {
-    _connectionState.beginOperation(Operation.ApplyConnectionOffer);
+    _connectionState.beginOperation(Operation.applyConnectionOffer);
     try {
       final p = await _handshake.applyConnectionRequest(welcomeMessage,
           remoteKey: remoteKey,
@@ -105,7 +105,7 @@ class Connection {
   /// The device is then ready to encrypt and decrypt messages.
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
       {required SecretKey remoteKey}) async {
-    _connectionState.beginOperation(Operation.ApplyConnectionConfirmation);
+    _connectionState.beginOperation(Operation.applyConnectionConfirmation);
     try {
       final p = await _handshake.applyConnectionConfirmation(
           connectionConfirmation,
@@ -120,7 +120,7 @@ class Connection {
 
   /// Decrypts an incoming message.
   Future<Uint8List> decrypt(Uint8List message) async {
-    _connectionState.beginOperation(Operation.DecryptMessage);
+    _connectionState.beginOperation(Operation.decryptMessage);
     try {
       final p = await _encryption.decrypt(message);
       _connectionState.completeOperation();
@@ -133,7 +133,7 @@ class Connection {
 
   /// Encrypts an outgoing message.
   Future<Uint8List> encrypt(Uint8List plaintext) async {
-    _connectionState.beginOperation(Operation.EncryptMessage);
+    _connectionState.beginOperation(Operation.encryptMessage);
     try {
       final p = await _encryption.encrypt(plaintext,
           algorithm: _stateAccessor.outgoingEncryptionAlgorithm);

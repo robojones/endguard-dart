@@ -1,9 +1,9 @@
 enum Operation {
-  ApplyConnectionConfirmation,
-  ApplyConnectionOffer,
-  CreateConnectionOffer,
-  DecryptMessage,
-  EncryptMessage,
-  ExportState,
-  UpdateConnectionSettings,
+  applyConnectionConfirmation,
+  applyConnectionOffer,
+  createConnectionOffer,
+  decryptMessage,
+  encryptMessage,
+  exportState,
+  updateConnectionSettings,
 }

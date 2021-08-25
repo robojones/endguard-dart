@@ -47,23 +47,23 @@ class ParallelismManager {
   /// An Error is thrown if beginOperation is called before the previous operation was completed with completeOperation() or abortOperation().
   void beginOperation(Operation o) {
     final currentState = _stateAccessor.initializationState;
-    if (o == Operation.ExportState) {
+    if (o == Operation.exportState) {
       _beginOperation(o);
-    } else if (o == Operation.UpdateConnectionSettings) {
+    } else if (o == Operation.updateConnectionSettings) {
       _beginOperation(o);
-    } else if (o == Operation.CreateConnectionOffer &&
+    } else if (o == Operation.createConnectionOffer &&
         currentState == ConnectionState_State.NOT_INITIALIZED) {
       _beginOperation(o);
-    } else if (o == Operation.ApplyConnectionOffer &&
+    } else if (o == Operation.applyConnectionOffer &&
         currentState == ConnectionState_State.NOT_INITIALIZED) {
       _beginOperation(o);
-    } else if (o == Operation.ApplyConnectionConfirmation &&
+    } else if (o == Operation.applyConnectionConfirmation &&
         currentState == ConnectionState_State.HANDSHAKE) {
       _beginOperation(o);
-    } else if (o == Operation.EncryptMessage &&
+    } else if (o == Operation.encryptMessage &&
         currentState == ConnectionState_State.ESTABLISHED) {
       _beginOperation(o);
-    } else if (o == Operation.DecryptMessage &&
+    } else if (o == Operation.decryptMessage &&
         currentState == ConnectionState_State.ESTABLISHED) {
       _beginOperation(o);
     } else {
@@ -81,11 +81,11 @@ class ParallelismManager {
   void completeOperation() {
     var o = _activeOperation;
 
-    if (o == Operation.CreateConnectionOffer) {
+    if (o == Operation.createConnectionOffer) {
       _stateAccessor.initializationState = ConnectionState_State.HANDSHAKE;
-    } else if (o == Operation.ApplyConnectionOffer) {
+    } else if (o == Operation.applyConnectionOffer) {
       _stateAccessor.initializationState = ConnectionState_State.ESTABLISHED;
-    } else if (o == Operation.ApplyConnectionConfirmation) {
+    } else if (o == Operation.applyConnectionConfirmation) {
       _stateAccessor.initializationState = ConnectionState_State.ESTABLISHED;
     }
 
