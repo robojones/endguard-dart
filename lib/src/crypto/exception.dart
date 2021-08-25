@@ -1,10 +1,11 @@
-import 'package:endguard/src/protos/protocol.pb.dart';
+import 'dart:typed_data';
 
 class MessageAuthenticationException implements Exception {
-  EncryptedMessage encryptedMessage;
-  final String message;
+  /// Message that failed authentication
+  Uint8List encryptedMessage;
 
-  MessageAuthenticationException({required this.encryptedMessage})
-      : message =
-            'EncryptedMessage has failed the authentication check';
+  /// Exception error message
+  final String message = 'EncryptedMessage has failed the authentication check';
+
+  MessageAuthenticationException({required this.encryptedMessage});
 }

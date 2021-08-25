@@ -32,9 +32,8 @@ class Transmission {
 
   Future<Uint8List> decrypt(Uint8List message) async {
     // decrypt
-    final e = EncryptedMessage.fromBuffer(message);
     final keyMaterial = await _gatherDecryptionKeyMaterial();
-    final envelopeBytes = await MessageEncryption.decrypt(e, keyMaterial);
+    final envelopeBytes = await MessageEncryption.decrypt(message, keyMaterial);
     final envelope = Envelope.fromBuffer(envelopeBytes);
 
     // advance ratchets
