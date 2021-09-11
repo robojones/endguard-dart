@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:endguard/src/crypto/exception.dart';
 import 'package:endguard/src/parallelism/operations.dart';
 import 'package:endguard/src/transmission/transmission.dart';
 import 'package:endguard/src/handshake/handshake.dart';
@@ -21,13 +22,12 @@ class Connection {
   late final ParallelismManager _connectionState;
 
   /// Creates a new connection.
-  /// The handshake needs to be complete before using [encrypt] or [decrypt]
   Connection() {
     final s = StateAccessor();
     _init(s);
   }
 
-  /// Creates a connection from an existing connection state.
+  /// Creates a connection from an existing connection [state].
   /// To persist the connection state, use the [getState] and save the result.
   Connection.fromState(Uint8List state) {
     final s = StateAccessor.withState(state);
@@ -55,6 +55,9 @@ class Connection {
     return _stateAccessor.exportState();
   }
 
+  /// Set the encryption [algorithm] for outgoing messages.
+  /// If you do not set the algorithm explicitly, then the default encryption
+  /// algorithm is used.
   void setOutgoingEncryptionAlgorithm(Algorithm algorithm) {
     _connectionState.beginOperation(Operation.updateConnectionSettings);
     try {
@@ -68,11 +71,13 @@ class Connection {
 
   /// Creates a new connection request.
   /// This is the first step of the handshake.
-  Future<HandshakeMessage> createConnectionRequest() async {
+  /// Optionally, some additional authenticated content [aad] can be passed,
+  /// which will be authenticated alongside the connection request.
+  Future<HandshakeMessage> createConnectionRequest({Uint8List? aad}) async {
     _connectionState.beginOperation(Operation.createConnectionOffer);
     try {
       final p = await _handshake.createConnectionRequest(
-          algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
+          algorithm: _stateAccessor.outgoingEncryptionAlgorithm, aad: aad);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -81,17 +86,27 @@ class Connection {
     }
   }
 
-  /// Applies a connection request from another device.
-  /// Returns the connection confirmation for the other device.
+  /// Applies a [connectionRequest] from another device.
+  /// Authenticates the [connectionRequest] and [requestAad] (additional
+  /// authenticated content) using the [remoteKey].
+  /// Returns a connection confirmation for the other device.
+  /// Optionally, you can pass some additional authenticated content [aad] which
+  /// will be authenticated alongside the connection confirmation.
   /// This completes the handshake on this device.
   /// The device is then ready to encrypt and decrypt messages.
-  Future<HandshakeMessage> applyConnectionRequest(Uint8List welcomeMessage,
-      {required SecretKey remoteKey}) async {
+  /// Throws a [MessageAuthenticationException] if the message can not be
+  /// authenticated.
+  Future<HandshakeMessage> applyConnectionRequest(Uint8List connectionRequest,
+      {required SecretKey remoteKey,
+      Uint8List? requestAad,
+      Uint8List? aad}) async {
     _connectionState.beginOperation(Operation.applyConnectionOffer);
     try {
-      final p = await _handshake.applyConnectionRequest(welcomeMessage,
+      final p = await _handshake.applyConnectionRequest(connectionRequest,
           remoteKey: remoteKey,
-          algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
+          algorithm: _stateAccessor.outgoingEncryptionAlgorithm,
+          requestAad: requestAad,
+          aad: aad);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -100,16 +115,21 @@ class Connection {
     }
   }
 
-  /// Applies the connection confirmation from the other device.
+  /// Applies the [connectionConfirmation] from the other device.
+  /// Authenticates the [connectionConfirmation] and the [aad] from the other
+  /// device using the [key].
   /// This completes the handshake for this device.
   /// The device is then ready to encrypt and decrypt messages.
+  /// Throws a [MessageAuthenticationException] if the message can not be
+  /// authenticated.
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
-      {required SecretKey remoteKey}) async {
+      {required SecretKey remoteKey, Uint8List? aad}) async {
     _connectionState.beginOperation(Operation.applyConnectionConfirmation);
     try {
       final p = await _handshake.applyConnectionConfirmation(
           connectionConfirmation,
-          remoteKey: remoteKey);
+          remoteKey: remoteKey,
+          aad: aad);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -118,11 +138,13 @@ class Connection {
     }
   }
 
-  /// Decrypts an incoming message.
-  Future<Uint8List> decrypt(Uint8List message) async {
+  /// Decrypts an incoming [message].
+  /// Throws a [MessageAuthenticationException] if the [message] or [aad] can
+  /// not be authenticated.
+  Future<Uint8List> decrypt(Uint8List message, {Uint8List? aad}) async {
     _connectionState.beginOperation(Operation.decryptMessage);
     try {
-      final p = await _encryption.decrypt(message);
+      final p = await _encryption.decrypt(message, aad: aad);
       _connectionState.completeOperation();
       return p;
     } catch (e) {
@@ -131,12 +153,14 @@ class Connection {
     }
   }
 
-  /// Encrypts an outgoing message.
-  Future<Uint8List> encrypt(Uint8List plaintext) async {
+  /// Encrypts the [plaintext] of a message.
+  /// Optionally, some additional authenticated content [aad] can be passed,
+  /// which will be authenticated alongside the message.
+  Future<Uint8List> encrypt(Uint8List plaintext, {Uint8List? aad}) async {
     _connectionState.beginOperation(Operation.encryptMessage);
     try {
       final p = await _encryption.encrypt(plaintext,
-          algorithm: _stateAccessor.outgoingEncryptionAlgorithm);
+          algorithm: _stateAccessor.outgoingEncryptionAlgorithm, aad: aad);
       _connectionState.completeOperation();
       return p;
     } catch (e) {

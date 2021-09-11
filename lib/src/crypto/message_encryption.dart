@@ -55,9 +55,8 @@ class MessageEncryption {
 
   /// Decrypts an AES256-GCM [encryptedMessage] using the [key]
   /// and authenticates the additional authenticated data [aad]
-  static Future<Uint8List> decrypt(
-      Uint8List encryptedMessage, SecretKey key,
-      {Uint8List? aad}) async {
+  static Future<Uint8List> decrypt(Uint8List encryptedMessage, SecretKey key,
+      {required Uint8List? aad}) async {
     aad ??= Uint8List(0);
 
     late final EncryptedMessage encrypted;
@@ -76,22 +75,21 @@ class MessageEncryption {
     // create secret box
     final mac = Mac(encrypted.mac);
     final secondaryMac = Mac(encrypted.secondaryMac);
-    final secretBox = SecretBox(encrypted.ciphertext,
-        nonce: encrypted.nonce, mac: mac);
+    final secretBox =
+        SecretBox(encrypted.ciphertext, nonce: encrypted.nonce, mac: mac);
 
     // validate secondary mac
     final secondaryMacKey = await keyDerivation.deriveKey(
         secretKey: key, nonce: encrypted.secondaryMacNonce);
-    final wantSecondaryMac = await macAlgorithm.calculateMac(
-        encrypted.ciphertext + aad,
-        secretKey: secondaryMacKey);
+    final wantSecondaryMac = await macAlgorithm
+        .calculateMac(encrypted.ciphertext + aad, secretKey: secondaryMacKey);
     if (secondaryMac != wantSecondaryMac) {
       throw MessageAuthenticationException(encryptedMessage: encryptedMessage);
     }
 
     // decryption
-    final encryptionKey = await keyDerivation.deriveKey(
-        secretKey: key, nonce: encrypted.nonce);
+    final encryptionKey =
+        await keyDerivation.deriveKey(secretKey: key, nonce: encrypted.nonce);
 
     List<int> plaintext;
     try {
@@ -109,9 +107,8 @@ class MessageEncryption {
 
   /// Encrypts a [plaintext] message using the [key]
   /// and includes the additional authenticated data [aad] in the mac.
-  static Future<EncryptedMessage> encrypt(
-      Uint8List plaintext, SecretKey key,
-      {Uint8List? aad, required Algorithm algorithm}) async {
+  static Future<EncryptedMessage> encrypt(Uint8List plaintext, SecretKey key,
+      {required Uint8List? aad, required Algorithm algorithm}) async {
     aad ??= Uint8List(0);
 
     // select algorithms
@@ -132,8 +129,8 @@ class MessageEncryption {
 
     // calculate secondary mac
     final secondaryMacNone = cipher.newNonce();
-    final secondaryMacKey = await keyDerivation.deriveKey(
-        secretKey: key, nonce: secondaryMacNone);
+    final secondaryMacKey =
+        await keyDerivation.deriveKey(secretKey: key, nonce: secondaryMacNone);
     final secondaryMac = await macAlgorithm
         .calculateMac(secretBox.cipherText + aad, secretKey: secondaryMacKey);
 
