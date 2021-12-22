@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:endguard/endguard.dart';
-import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/state/state_accessor.dart';
 import 'package:test/test.dart';
 
@@ -179,7 +178,8 @@ void main() {
               sender: a,
               recipient: b,
               message: 'message from a to b',
-              aad: 'basically random data to be authenticated alongside the message');
+              aad:
+                  'basically random data to be authenticated alongside the message');
           await testSendMessage(
               sender: b,
               recipient: a,
@@ -189,8 +189,7 @@ void main() {
               sender: b,
               recipient: a,
               message: 'message from b to a',
-              aad:
-                  'aad for another message');
+              aad: 'aad for another message');
           await testSendMessage(
               sender: a,
               recipient: b,
