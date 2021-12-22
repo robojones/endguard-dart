@@ -8,44 +8,64 @@ import 'package:test/test.dart';
 /// The TestContext provides connections in all possible states and all types of messages.
 class TestContext {
   late final Connection _uninitializedConnection;
-  late final Future<Connection> _handshakeStateConnection;
+  late final Future<Connection> _handshakeConnection;
   late final Future<Connection> _establishedConnection;
 
   late final Uint8List _uninitializedState;
-  late final Uint8List _handshakeState;
-  late final Uint8List _establishedState;
+  late final Future<Uint8List> _handshakeState;
+  late final Future<Uint8List> _establishedState;
 
   late final Future<HandshakeMessage> _connectionRequest;
   late final Future<HandshakeMessage> _connectionConfirmation;
+  late final Future<Uint8List> _message;
 
   TestContext() {
-    _uninitializedConnection = Connection();
-    _uninitializedState = _uninitializedConnection.getState();
+    _createConnectionRequest();
+    _applyConnectionRequest();
+    _encryptMessage();
+    _initializeConnectionsForAssertion();
+  }
 
-    final b = Connection.fromState(_uninitializedState);
-    _connectionRequest = b.createConnectionRequest();
-
-    _handshakeStateConnection = () async {
-      final b = Connection.fromState(_uninitializedState);
-      await b.createConnectionRequest();
-      _handshakeState = b.getState();
-      return b;
+  _createConnectionRequest() {
+    final connectionA = Connection();
+    _uninitializedState = connectionA.getState();
+    _connectionRequest = connectionA.createConnectionRequest();
+    _handshakeState = () async {
+      await _connectionRequest;
+      return connectionA.getState();
     }();
+  }
 
+  _applyConnectionRequest() {
+    final connectionB = Connection.fromState(_uninitializedState);
     _connectionConfirmation = () async {
-      final a = Connection.fromState(_uninitializedState);
       final cr = await connectionRequest;
-      return a.applyConnectionRequest(cr.exportPackage(),
+      return connectionB.applyConnectionRequest(cr.exportPackage(),
           remoteKey: cr.exportKey());
     }();
+    _establishedState = () async {
+      await _connectionConfirmation;
+      return connectionB.getState();
+    }();
+  }
 
+  _encryptMessage() {
+    _message = () async {
+      final connectionA = Connection.fromState(await _handshakeState);
+      final cc = await _connectionConfirmation;
+      await connectionA.applyConnectionConfirmation(cc.exportPackage(),
+          remoteKey: cc.exportKey());
+      return connectionA.encrypt(testPlaintext, aad: testAad);
+    }();
+  }
+
+  _initializeConnectionsForAssertion() {
+    _uninitializedConnection = Connection.fromState(_uninitializedState);
+    _handshakeConnection = () async {
+      return Connection.fromState(await _handshakeState);
+    }();
     _establishedConnection = () async {
-      final a = Connection.fromState(_uninitializedState);
-      final cr = await connectionRequest;
-      await a.applyConnectionRequest(cr.exportPackage(),
-          remoteKey: cr.exportKey());
-      _establishedState = a.getState();
-      return a;
+      return Connection.fromState(await _establishedState);
     }();
   }
 
@@ -53,20 +73,20 @@ class TestContext {
     return _uninitializedConnection;
   }
 
-  Future<HandshakeMessage> get connectionRequest {
-    return _connectionRequest;
-  }
-
-  Future<Connection> get handshakeStateConnection {
-    return _handshakeStateConnection;
-  }
-
-  Future<HandshakeMessage> get connectionConfirmation {
-    return _connectionConfirmation;
+  Future<Connection> get handshakeStateConnection async {
+    return _handshakeConnection;
   }
 
   Future<Connection> get establishedConnection async {
     return _establishedConnection;
+  }
+
+  Future<HandshakeMessage> get connectionRequest {
+    return _connectionRequest;
+  }
+
+  Future<HandshakeMessage> get connectionConfirmation {
+    return _connectionConfirmation;
   }
 
   String get testPlaintextString {
@@ -77,10 +97,13 @@ class TestContext {
     return Uint8List.fromList(utf8.encode(testPlaintextString));
   }
 
-  Uint8List get testMessage {
-    // does not need to be in the correct format
-    // the operation should fail before attempting to parse this
-    return Uint8List.fromList(utf8.encode('test message'));
+  Future<Uint8List> get testMessage async {
+    return _message;
+  }
+
+  Uint8List get testAad {
+    return Uint8List.fromList(
+        utf8.encode('some additionally authenticated data'));
   }
 
   Uint8List get invalidFormatCiphertext {
@@ -95,17 +118,23 @@ class TestContext {
     return SecretKey(utf8.encode('test key'));
   }
 
+  Uint8List get invalidAad {
+    // Does not need to be a valid ciphertext as the test should fail
+    // before trying to decrypt the ciphertext.
+    return Uint8List.fromList(utf8.encode('this is a wrong aad'));
+  }
+
   Future<void> assertStateIsRolledBack() async {
     final uninitialized = uninitializedConnection;
     expect(uninitialized.getState(), equals(_uninitializedState),
         reason:
             'state of uninitialized connection was modified and not rolled back');
     final handshake = await handshakeStateConnection;
-    expect(handshake.getState(), equals(_handshakeState),
+    expect(handshake.getState(), equals(await _handshakeState),
         reason:
             'state of connection with active handshake was modified and not rolled back');
     final established = await establishedConnection;
-    expect(established.getState(), equals(_establishedState),
+    expect(established.getState(), equals(await _establishedState),
         reason:
             'state of established connection was modified and not rolled back');
   }
