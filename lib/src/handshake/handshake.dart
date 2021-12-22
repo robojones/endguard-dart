@@ -14,7 +14,7 @@ class Handshake {
   Handshake(this._diffieHellmanRatchet, this._sha256Ratchet);
 
   Future<HandshakeMessage> createConnectionRequest(
-      {required Algorithm algorithm}) async {
+      {required Algorithm algorithm, required Uint8List? aad}) async {
     final k =
         await _diffieHellmanRatchet.generateAndAddLocalDiffieHellmanKeyPair();
 
@@ -24,13 +24,16 @@ class Handshake {
     final plaintext = w.writeToBuffer();
 
     return await HandshakeEncryption.encryptMessage(plaintext,
-        algorithm: algorithm);
+        algorithm: algorithm, aad: aad);
   }
 
   Future<HandshakeMessage> applyConnectionRequest(Uint8List connectionRequest,
-      {required SecretKey remoteKey, required Algorithm algorithm}) async {
+      {required SecretKey remoteKey,
+      required Algorithm algorithm,
+      required Uint8List? requestAad,
+      required Uint8List? aad}) async {
     final bytes = await HandshakeEncryption.decryptMessage(connectionRequest,
-        key: remoteKey);
+        key: remoteKey, aad: requestAad);
     final p = ConnectionOffer.fromBuffer(bytes);
 
     // set remote public key in Diffie-Hellman ratchet
@@ -65,14 +68,15 @@ class Handshake {
     oc.outgoingSHA256RatchetInitValue = outgoingSHA256RatchetInitValue.bytes;
 
     return await HandshakeEncryption.encryptMessage(oc.writeToBuffer(),
-        algorithm: algorithm);
+        algorithm: algorithm, aad: aad);
   }
 
   Future<void> applyConnectionConfirmation(Uint8List connectionConfirmation,
-      {required SecretKey remoteKey}) async {
+      {required SecretKey remoteKey, required Uint8List? aad}) async {
     final bytes = await HandshakeEncryption.decryptMessage(
         connectionConfirmation,
-        key: remoteKey);
+        key: remoteKey,
+        aad: aad);
     final oc = ConnectionConfirmation.fromBuffer(bytes);
 
     final localPk = SimplePublicKey(oc.connectionOfferDiffieHellmanPublicKey,

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:endguard/endguard.dart';
-import 'package:endguard/src/protos/protocol.pb.dart';
 import 'package:endguard/src/state/state_accessor.dart';
 import 'package:test/test.dart';
 
@@ -84,7 +83,7 @@ void main() {
           });
 
           test(
-              'messages should be able to be encrypted by one instance and encrypted by the other',
+              'messages should be able to be encrypted by one instance and decrypted by the other',
               () async {
             final a = Connection();
             final b = Connection();
@@ -127,6 +126,75 @@ void main() {
             await testSendMessage(
                 sender: a, recipient: b, message: 'message from a to b');
           });
+        });
+
+        test(
+            'additional authentication data should be authenticated alongside the message',
+            () async {
+          // Some additional authenticated data for the handshake
+          final crAad =
+              Uint8List.fromList(utf8.encode('connection request aad'));
+          final ccAad =
+              Uint8List.fromList(utf8.encode('connection confirmation aad'));
+
+          final a = Connection();
+          final b = Connection();
+
+          if (algorithmA != null) {
+            a.setOutgoingEncryptionAlgorithm(algorithmA);
+          }
+          if (algorithmB != null) {
+            b.setOutgoingEncryptionAlgorithm(algorithmB);
+          }
+
+          // handshake
+          final connectionRequest = await a.createConnectionRequest(aad: crAad);
+          final connectionConfirmation = await b.applyConnectionRequest(
+              connectionRequest.exportPackage(),
+              remoteKey: connectionRequest.exportKey(),
+              requestAad: crAad,
+              aad: ccAad);
+          await a.applyConnectionConfirmation(
+              connectionConfirmation.exportPackage(),
+              remoteKey: connectionConfirmation.exportKey(),
+              aad: ccAad);
+
+          Future<void> testSendMessage({
+            required Connection sender,
+            required Connection recipient,
+            required String message,
+            required String aad,
+          }) async {
+            final m = Uint8List.fromList(utf8.encode(message));
+            final data = Uint8List.fromList(utf8.encode(aad));
+            final encrypted = await sender.encrypt(m, aad: data);
+            final result = await recipient.decrypt(encrypted, aad: data);
+
+            expect(result.length, equals(m.length));
+            expect(result, equals(m));
+          }
+
+          await testSendMessage(
+              sender: a,
+              recipient: b,
+              message: 'message from a to b',
+              aad:
+                  'basically random data to be authenticated alongside the message');
+          await testSendMessage(
+              sender: b,
+              recipient: a,
+              message: 'message from b to a',
+              aad: 'a different aad');
+          await testSendMessage(
+              sender: b,
+              recipient: a,
+              message: 'message from b to a',
+              aad: 'aad for another message');
+          await testSendMessage(
+              sender: a,
+              recipient: b,
+              message: 'message from a to b',
+              aad: 'and some more data');
         });
       }
     }

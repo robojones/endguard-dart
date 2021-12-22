@@ -30,10 +30,12 @@ class Transmission {
         diffieHellmanRatchetValue.bytes + sha256RatchetValue.bytes);
   }
 
-  Future<Uint8List> decrypt(Uint8List message) async {
+  Future<Uint8List> decrypt(Uint8List message,
+      {required Uint8List? aad}) async {
     // decrypt
     final keyMaterial = await _gatherDecryptionKeyMaterial();
-    final envelopeBytes = await MessageEncryption.decrypt(message, keyMaterial);
+    final envelopeBytes =
+        await MessageEncryption.decrypt(message, keyMaterial, aad: aad);
     final envelope = Envelope.fromBuffer(envelopeBytes);
 
     // advance ratchets
@@ -48,7 +50,8 @@ class Transmission {
     return Uint8List.fromList(envelope.payload);
   }
 
-  Future<Uint8List> encrypt(Uint8List plaintext, {required Algorithm algorithm}) async {
+  Future<Uint8List> encrypt(Uint8List plaintext,
+      {required Algorithm algorithm, required Uint8List? aad}) async {
     // create envelope
     final localKeyPair =
         await _diffieHellmanRatchet.generateAndAddLocalDiffieHellmanKeyPair();
@@ -63,7 +66,7 @@ class Transmission {
     // encrypt
     final keyMaterial = await _gatherEncryptionKeyMaterial();
     final e = await MessageEncryption.encrypt(envelopeBytes, keyMaterial,
-        algorithm: algorithm);
+        algorithm: algorithm, aad: aad);
 
     // advance ratchets
     await _diffieHellmanRatchet.advanceOutgoingDiffieHellmanRatchet();

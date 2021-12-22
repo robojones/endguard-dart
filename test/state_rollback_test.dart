@@ -44,8 +44,8 @@ void main() {
           (TestContext context) async {
         final confirmation = await context.connectionConfirmation;
         await context.uninitializedConnection.applyConnectionConfirmation(
-            confirmation.exportPackage(),
-            remoteKey: confirmation.exportKey());
+          confirmation.exportPackage(),
+          remoteKey: confirmation.exportKey());
       });
 
       testExpectInvalidOperationError('encrypting a message',
@@ -55,13 +55,27 @@ void main() {
 
       testExpectInvalidOperationError('decrypting a message',
           (TestContext context) async {
-        await context.uninitializedConnection.decrypt(context.testPlaintext);
+        final testMessage = await context.testMessage;
+        await context.uninitializedConnection
+            .decrypt(testMessage, aad: context.testAad);
       });
 
       testExpectMessageAuthenticationException(
-      'applying a ConnectionRequest with wrong format',
+          'applying a ConnectionRequest with wrong format',
           (TestContext context) async {
-        await context.uninitializedConnection.applyConnectionRequest(context.invalidFormatCiphertext, remoteKey: context.invalidKey);
+        await context.uninitializedConnection.applyConnectionRequest(
+          context.invalidFormatCiphertext,
+          remoteKey: context.invalidKey);
+      });
+
+      testExpectMessageAuthenticationException(
+          'applying a ConnectionRequest with wrong aad',
+          (TestContext context) async {
+          final cr = await context.connectionRequest;
+        await context.uninitializedConnection.applyConnectionRequest(
+          cr.exportPackage(),
+          remoteKey: cr.exportKey(),
+          requestAad: context.invalidAad);
       });
     });
 
@@ -76,8 +90,10 @@ void main() {
           (TestContext context) async {
         final request = await context.connectionRequest;
         final connection = await context.handshakeStateConnection;
-        await connection.applyConnectionRequest(request.exportPackage(),
-            remoteKey: request.exportKey());
+        await connection.applyConnectionRequest(
+          request.exportPackage(),
+          remoteKey: request.exportKey(),
+        );
       });
 
       testExpectInvalidOperationError('encrypting a message',
@@ -89,7 +105,7 @@ void main() {
       testExpectInvalidOperationError('decrypting a message',
           (TestContext context) async {
         final connection = await context.handshakeStateConnection;
-        final message = context.testMessage;
+        final message = await context.testMessage;
         await connection.decrypt(message);
       });
 
@@ -97,7 +113,21 @@ void main() {
           'applying a ConnectionConfirmation with wrong format',
           (TestContext context) async {
         final connection = await context.handshakeStateConnection;
-        await connection.applyConnectionConfirmation(context.invalidFormatCiphertext, remoteKey: context.invalidKey);
+        await connection.applyConnectionConfirmation(
+          context.invalidFormatCiphertext,
+          remoteKey: context.invalidKey,
+        );
+      });
+      testExpectMessageAuthenticationException(
+          'applying a ConnectionConfirmation with wrong aad',
+          (TestContext context) async {
+        final connection = await context.handshakeStateConnection;
+        final cc = await context.connectionConfirmation;
+        await connection.applyConnectionConfirmation(
+          cc.exportPackage(),
+          remoteKey: cc.exportKey(),
+          aad: context.invalidAad,
+        );
       });
     });
 
@@ -110,18 +140,18 @@ void main() {
 
       testExpectInvalidOperationError('applying a ConnectionRequest',
           (TestContext context) async {
-        final request = await context.connectionRequest;
+        final cr = await context.connectionRequest;
         final connection = await context.establishedConnection;
-        await connection.applyConnectionRequest(request.exportPackage(),
-            remoteKey: request.exportKey());
+        await connection.applyConnectionRequest(cr.exportPackage(),
+            remoteKey: cr.exportKey());
       });
 
       testExpectInvalidOperationError('applying a ConnectionConfirmation',
           (TestContext context) async {
-        final request = await context.connectionConfirmation;
+        final cc = await context.connectionConfirmation;
         final connection = await context.establishedConnection;
-        await connection.applyConnectionConfirmation(request.exportPackage(),
-            remoteKey: request.exportKey());
+        await connection.applyConnectionConfirmation(cc.exportPackage(),
+            remoteKey: cc.exportKey());
       });
 
       testExpectMessageAuthenticationException(
@@ -129,6 +159,14 @@ void main() {
           (TestContext context) async {
         final connection = await context.establishedConnection;
         await connection.decrypt(context.invalidFormatCiphertext);
+      });
+
+      testExpectMessageAuthenticationException(
+          'decrypting a valid message with wrong aad',
+          (TestContext context) async {
+        final connection = await context.establishedConnection;
+        final message = await context.testMessage;
+        await connection.decrypt(message, aad: context.invalidAad);
       });
     });
   });
